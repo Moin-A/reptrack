@@ -8,9 +8,23 @@ jobs:
   build-and-deploy:
     runs-on: self-hosted
     steps:
-      - name: SSH into Raspberry Pi
+      - uses: actions/checkout@v4
+
+      - name: Copy deploy script to Raspberry Pi
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.PI_HOST }}
+          username: ${{ secrets.PI_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: deploy_script.sh
+          target: ~/reptrack/
+
+      - name: SSH into Raspberry Pi and run deploy script
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.PI_HOST }}
           username: ${{ secrets.PI_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            chmod +x ~/reptrack/deploy_script.sh
+            ~/reptrack/deploy_script.sh
