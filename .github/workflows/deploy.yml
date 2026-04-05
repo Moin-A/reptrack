@@ -1,0 +1,54 @@
+name: Deploy to Raspberry Pi
+
+on:
+  push:
+      branches: [ main ]
+        workflow_run:
+            workflows: ["CI"]
+                types:
+                      - completed
+                          branches: [ main ]
+
+                          jobs:
+                            deploy:
+                                name: Deploy via Self-Hosted Runner
+                                    runs-on: self-hosted
+                                        if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
+
+                                            steps:
+                                                  - name: Checkout code
+                                                          uses: actions/checkout@v4
+
+                                                                - name: Set up Ruby
+                                                                        uses: ruby/setup-ruby@v1
+                                                                                with:
+                                                                                          ruby-version: .ruby-version
+                                                                                                    bundler-cache: true
+                                                                                                    
+                                                                                                          - name: Install dependencies
+                                                                                                                  run: bundle install --without development test
+                                                                                                                  
+                                                                                                                        - name: Set up database
+                                                                                                                                run: |
+                                                                                                                                          bin/rails db:migrate RAILS_ENV=production
+                                                                                                                                                  env:
+                                                                                                                                                            RAILS_ENV: production
+                                                                                                                                                                      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+                                                                                                                                                                                SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+                                                                                                                                                                                
+                                                                                                                                                                                      - name: Precompile assets
+                                                                                                                                                                                              run: bin/rails assets:precompile RAILS_ENV=production
+                                                                                                                                                                                                      env:
+                                                                                                                                                                                                                RAILS_ENV: production
+                                                                                                                                                                                                                          SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                - name: Restart application server
+                                                                                                                                                                                                                                        run: |
+                                                                                                                                                                                                                                                  sudo systemctl restart reptrack.service
+                                                                                                                                                                                                                                                          env:
+                                                                                                                                                                                                                                                                    RAILS_ENV: production
+                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                          - name: Health check
+                                                                                                                                                                                                                                                                                  run: |
+                                                                                                                                                                                                                                                                                            sleep 5
+                                                                                                                                                                                                                                                                                                      curl --fail http://localhost:3000/up || (echo "Health check failed!" && exit 1)
