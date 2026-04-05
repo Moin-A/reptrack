@@ -14,6 +14,7 @@ jobs:
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > /tmp/pi_key
           chmod 600 /tmp/pi_key
+          ssh -i /tmp/pi_key -o StrictHostKeyChecking=no ${{ secrets.PI_USER }}@${{ secrets.PI_HOST }} "mkdir -p ~/reptrack"
           scp -i /tmp/pi_key -o StrictHostKeyChecking=no deploy_script.sh ${{ secrets.PI_USER }}@${{ secrets.PI_HOST }}:~/reptrack/
           rm -f /tmp/pi_key
 
