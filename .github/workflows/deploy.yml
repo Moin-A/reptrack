@@ -11,13 +11,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Copy deploy script to Raspberry Pi
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.PI_HOST }}
-          username: ${{ secrets.PI_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: deploy_script.sh
-          target: ~/reptrack/
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > /tmp/pi_key
+          chmod 600 /tmp/pi_key
+          scp -i /tmp/pi_key -o StrictHostKeyChecking=no deploy_script.sh ${{ secrets.PI_USER }}@${{ secrets.PI_HOST }}:~/reptrack/
+          rm -f /tmp/pi_key
 
       - name: SSH into Raspberry Pi and run deploy script
         uses: appleboy/ssh-action@v1
