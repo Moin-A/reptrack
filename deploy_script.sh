@@ -13,3 +13,5 @@
 # Step 6: Kubernetes apply
 
 # Step 7: Database migration
+
+echo "Deploy script executed successfully!"
