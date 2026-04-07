@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Step 1: Initialize repository for reptrack
-TARGET_DIR="$HOME/practify"
+TARGET_DIR="$HOME/reptrack"
 mkdir -p "$TARGET_DIR"
 cd "$TARGET_DIR"
 
