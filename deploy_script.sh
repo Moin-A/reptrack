@@ -27,7 +27,19 @@ docker push $DOCKER_USERNAME/reptrack:latest
 
 # Step 5: Find Kubernetes manifest
 
+DEPLOY_YAML=$(find . -regex ".*deployment.*kube.*\.yaml" | head -n 1)
+WORKER_YAML=$(find . -regex ".*worker.*kube.*\.yaml" | head -n 1)
+
+if [ -z "$DEPLOY_YAML" ] || [ -z "$WORKER_YAML" ]; then
+            echo "❌ ERROR: Manifests not found!"
+            exit 1
+fi
+
+
 # Step 6: Kubernetes apply
+ echo "--- Applying Manifests ---"
+ kubectl apply -f "$DEPLOY_YAML"
+ kubectl apply -f "$WORKER_YAML"
 
 # Step 7: Database migration
 
