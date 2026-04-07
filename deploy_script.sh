@@ -9,7 +9,7 @@ cd "$TARGET_DIR"
 # Step 2: Sync repository (clone/pull latest code)
 if [ ! -d ".git" ]; then
     echo "--- Cloning ---"
-    git clone https://github.com/Moin-A/Practify.git .
+    git clone https://github.com/Moin-A/reptrack.git .
 else
     echo "--- Syncing ---"
     git fetch origin
