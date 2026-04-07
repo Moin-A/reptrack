@@ -66,8 +66,51 @@ killall process_name          # kill by name
 ```bash
 grep "pattern" file.txt       # search in file
 find . -name "*.sh"           # find files by name
+find . -name "*deployment*"   # find by partial name (glob)
+find . -regex ".*deployment.*kube.*\.yaml"  # find using regex
 which command                 # find command location
 ```
+
+## Command Substitution — Saving Output to a Variable
+`$()` captures the output of a command and stores it in a variable.
+
+```bash
+MY_VAR=$(some command)        # save output of command into variable
+```
+
+Without `$()` — just prints to terminal, nothing saved:
+```bash
+find . -name "*.yaml"
+```
+
+With `$()` — output is captured and stored:
+```bash
+DEPLOY_YAML=$(find . -name "*.yaml" | head -n 1)
+echo $DEPLOY_YAML             # prints the file path
+```
+
+## Find a File and Save Path
+```bash
+# by exact name
+DEPLOY_YAML=$(find . -name "practify-deployment.yaml" | head -n 1)
+
+# by glob pattern (anything containing "deployment")
+DEPLOY_YAML=$(find . -name "*deployment*.yaml" | head -n 1)
+
+# by regex (must contain both "deployment" and "kube")
+DEPLOY_YAML=$(find . -regex ".*deployment.*kube.*\.yaml" | head -n 1)
+```
+
+`head -n 1` — take only the first result in case multiple files match.
+
+### Glob vs Regex
+| Pattern | Type | Meaning |
+|---------|------|---------|
+| `*deployment*` | glob | anything containing "deployment" |
+| `.*deployment.*\.yaml` | regex | same but with full regex syntax |
+| `.` | regex | any single character |
+| `.*` | regex | anything (zero or more characters) |
+| `\.` | regex | literal dot (escaped) |
 
 ## Conditionals
 ```bash
@@ -82,7 +125,24 @@ fi
 if [ -d "folder" ]; then      # check directory exists
   echo "exists"
 fi
+
+if [ -z "$VAR" ]; then        # check if variable is empty
+  echo "VAR is empty"
+  exit 1
+fi
+
+if [ -n "$VAR" ]; then        # check if variable is non-empty
+  echo "VAR has a value"
+fi
 ```
+
+### Common [ ] flags
+| Flag | Meaning |
+|------|---------|
+| `-z` | string is empty |
+| `-n` | string is non-empty |
+| `-f` | file exists |
+| `-d` | directory exists |
 
 ## Loops
 ```bash
@@ -125,3 +185,35 @@ ssh -i /tmp/pi_key -o StrictHostKeyChecking=no user@host "mkdir -p ~/reptrack"
 | `-o StrictHostKeyChecking=no` | skip "are you sure you want to connect?" prompt (needed for automation) |
 | `user@host` | who to connect as and where |
 | `"mkdir -p ~/reptrack"` | command to run on the remote machine after connecting |
+
+## UserGroup Primer
+
+**Unix was built for multiple users sharing one machine.** So it needed a way to control who can access what.
+
+**Users** answered "who are you." But what if two users need to share something, without exposing it to everyone?
+
+**Groups** solved that:
+```
+alice  ─┐
+bob    ─┴─ developers group  →  can access /projects
+charlie ── interns group     →  cannot
+```
+
+A file has three permission layers — owner, group, everyone else:
+```
+-rw-rw----  alice  developers  project.rb
+# alice can read/write, developers can read/write, others — nothing
+```
+
+**Docker reused this exact idea:**
+- Daemon runs as `root`
+- Socket owned by `root:docker`
+- Want access? Admin explicitly adds you to `docker` group
+
+```bash
+sudo usermod -aG docker rpi02  # add user rpi02 to docker group
+# -a = append (don't replace existing groups)
+# -G = groups to add to
+```
+
+The intention: **nothing is trusted by default, access must be explicitly granted.**
