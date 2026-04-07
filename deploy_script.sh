@@ -17,12 +17,12 @@ fi
 
 # Step 3: Docker build
 echo "--- Docker Login ---"
-echo "${{ $DOCKER_PASSWORD }}" | sudo docker login -u "${{ $DOCKER_USERNAME }}" --password-stdin
+echo $DOCKER_PASSWORD | sudo docker login -u $DOCKER_USERNAME --password-stdin
 
 # Step 4: Docker push
 echo "--- Building & Pushing ---"
-sudo docker build --network=host -t ${{ $DOCKER_USERNAMEE }}/practify:latest .
-sudo docker push ${{ $DOCKER_PASSWORD }}/practify:latest
+sudo docker build --network=host -t $DOCKER_USERNAMEE/practify:latest .
+sudo docker push $DOCKER_PASSWORD/practify:latest
 
 # Step 5: Find Kubernetes manifest
 
