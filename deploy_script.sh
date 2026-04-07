@@ -11,11 +11,6 @@ if [ -d ".git" ]; then
     echo "--- Syncing ---"
     git fetch origin
     git reset --hard origin/main
-else
-    echo "--- Cloning ---"
-    rm -rf "$TARGET_DIR"
-    git clone https://github.com/Moin-A/reptrack.git "$TARGET_DIR"
-    cd "$TARGET_DIR"
 fi
 
 # Step 3: Docker build
