@@ -14,7 +14,6 @@ if [ -d ".git" ]; then
 else
     echo "--- Cloning ---"
     git clone https://github.com/Moin-A/reptrack.git .
-    cd "$TARGET_DIR"
 fi
 
 # Step 3: Docker build
