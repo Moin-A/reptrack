@@ -30,8 +30,8 @@ docker push $DOCKER_USERNAME/reptrack:latest
 
 # Step 5: Find Kubernetes manifest
 
-DEPLOY_YAML=$(find . -regex ".*\(deployment.*kube\|kube.*deployment\).*\.yaml"  | head -n 1)
-WORKER_YAML=$(find . -regex ".*\(worker.*kube\|kube.*worker\).*\.yaml"  | head -n 1)
+DEPLOY_YAML=$(find . -regex ".*kube.*deployment.*\.yaml" | head -n 1)
+WORKER_YAML=$(find . -regex ".*kube.*worker.*\.yaml" | head -n 1)
 
 if [ -z "$DEPLOY_YAML" ] || [ -z "$WORKER_YAML" ]; then
             echo "❌ ERROR: Manifests not found!"
