@@ -125,3 +125,40 @@ ssh -i /tmp/pi_key -o StrictHostKeyChecking=no user@host "mkdir -p ~/reptrack"
 | `-o StrictHostKeyChecking=no` | skip "are you sure you want to connect?" prompt (needed for automation) |
 | `user@host` | who to connect as and where |
 | `"mkdir -p ~/reptrack"` | command to run on the remote machine after connecting |
+
+UserGroup Primer
+
+**Unix was built for multiple users sharing one machine** — universities, research labs, offices all sharing a single computer. So from day one, it needed a way to control *who can access what*.
+
+**Users** solved "who are you":
+```
+alice, bob, charlie  — each has their own files
+```
+
+But then a new problem: *what if alice and bob are both developers and need to share project files?* You can't just make files world-readable — then charlie (the intern) can read them too.
+
+**Groups** solved "who shares what":
+```
+alice  ─┐
+bob    ─┼─ developers group  →  can access /projects
+charlie ─── interns group    →  cannot
+```
+
+A file has three permission layers:
+```
+-rw-rw----  1  alice  developers  project.rb
+               ^^^^   ^^^^^^^^^^
+               owner  group
+```
+- `alice` can read/write (owner)
+- anyone in `developers` can read/write (group)
+- everyone else — nothing
+
+**Docker just reused this same idea:**
+```
+docker daemon  →  needs root to run
+docker.sock    →  owned by root:docker group
+rpi02          →  add to docker group = trusted to use docker
+```
+
+The intention was never "make things complicated" — it was **"the system should not trust anyone by default, access must be explicitly granted."** Groups are just the mechanism for that explicit grant.
