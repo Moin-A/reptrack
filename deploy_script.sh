@@ -13,9 +13,10 @@ if [ -d ".git" ]; then
     git reset --hard origin/main
 else
     echo "--- Cloning ---"
-    rm -rf "$TARGET_DIR"
-    git clone https://github.com/Moin-A/reptrack.git "$TARGET_DIR"
-    cd "$TARGET_DIR"
+    git init
+    git remote add origin https://github.com/Moin-A/reptrack.git
+    git fetch origin
+    git reset --hard origin/main
 fi
 
 # Step 3: Docker build
