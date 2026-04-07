@@ -21,14 +21,15 @@ jobs:
           rm -f /tmp/pi_key
 
       - name: SSH into Raspberry Pi and run deploy script
-        env:
-          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-          DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.PI_HOST }}
           username: ${{ secrets.PI_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: DOCKER_USERNAME,DOCKER_PASSWORD
           script: |
             chmod +x ~/reptrack/deploy_script.sh
             ~/reptrack/deploy_script.sh
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
