@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Step 1: Initialize repository for reptrack
 TARGET_DIR="$HOME/practify"
