@@ -21,6 +21,9 @@ jobs:
           rm -f /tmp/pi_key
 
       - name: SSH into Raspberry Pi and run deploy script
+        env:
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+          DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.PI_HOST }}
