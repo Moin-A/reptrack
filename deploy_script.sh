@@ -32,6 +32,7 @@ docker push $DOCKER_USERNAME/reptrack:latest
 
 DEPLOY_YAML=$(find . -regex ".*kube.*deployment.*\.yaml" | head -n 1)
 WORKER_YAML=$(find . -regex ".*kube.*worker.*\.yaml" | head -n 1)
+sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 
 if [ -z "$DEPLOY_YAML" ]; then
     echo "❌ ERROR: Deployment manifest not found!"
@@ -41,8 +42,7 @@ fi
 # Step 6: Kubernetes apply
 echo "--- Applying Manifests ---"
 kubectl apply -f "$DEPLOY_YAML"
-if [ -n "$WORKER_YAML" ]; then
-   sudo chmod 644 /etc/rancher/k3s/k3s.yaml     
+if [ -n "$WORKER_YAML" ]; then     
    sudo kubectl apply -f "$WORKER_YAML"
 fi
 
