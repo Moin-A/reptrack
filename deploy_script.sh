@@ -42,6 +42,7 @@ fi
 echo "--- Applying Manifests ---"
 kubectl apply -f "$DEPLOY_YAML"
 if [ -n "$WORKER_YAML" ]; then
+   sudo chmod 644 /etc/rancher/k3s/k3s.yaml     
    sudo kubectl apply -f "$WORKER_YAML"
 fi
 
