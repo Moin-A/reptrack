@@ -42,7 +42,7 @@ fi
 echo "--- Applying Manifests ---"
 kubectl apply -f "$DEPLOY_YAML"
 if [ -n "$WORKER_YAML" ]; then
-    kubectl apply -f "$WORKER_YAML"
+   sudo kubectl apply -f "$WORKER_YAML"
 fi
 
 # Step 7: Database migration
