@@ -50,7 +50,7 @@ spec:
           image: moindev/reptrack:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 3000
+            - containerPort: 3001
           envFrom:
             - secretRef:
                 name: reptrack-secrets
@@ -66,3 +66,46 @@ spec:
         - name: hosts-config
           configMap:
             name: reptrack-hosts-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reptrack-service
+  namespace: reptrack          # ← fixed: was "practify"
+spec:
+  selector:
+    app: reptrack
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3001         # ← fixed: was 3001, should match containerPort
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: reptrack-ingress
+  namespace: reptrack
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: reptrack.co.in
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: reptrack-service  # ← fixed: was "practify-service"
+                port:
+                  number: 80
+    - host: www.reptrack.co.in
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: reptrack-service
+                port:
+                  number: 80
