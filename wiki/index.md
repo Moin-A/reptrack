@@ -14,7 +14,10 @@ Master catalog of all pages.
 
 ## Kubernetes
 
-*(no pages yet — add a source or ask a query to populate)*
+| Page | Summary |
+|------|---------|
+| [kubernetes](kubernetes/kubernetes.md) | Key concepts: manifest anatomy, Service, Ingress, Traefik middleware, canary deployments |
+| [expose-pod](kubernetes/expose-pod.md) | Expose a pod as a NodePort Service using kubectl expose |
 
 ---
 
