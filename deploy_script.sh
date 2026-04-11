@@ -33,6 +33,7 @@ docker push $DOCKER_USERNAME/reptrack:latest
 DEPLOY_YAML=$(find . -regex ".*kube.*deployment.*\.yaml" | head -n 1)
 WORKER_YAML=$(find . -regex ".*kube.*worker.*\.yaml" | head -n 1)
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
 if [ -z "$DEPLOY_YAML" ]; then
     echo "❌ ERROR: Deployment manifest not found!"
