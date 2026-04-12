@@ -21,6 +21,14 @@ Master catalog of all pages.
 
 ---
 
+## Networking
+
+| Page | Summary |
+|------|---------|
+| [cloudflare_tunnel_setup](cloudflare_tunnel_setup.md) | Create and configure a Cloudflare Tunnel to expose local or Kubernetes services without opening firewall ports |
+
+---
+
 ## Sources
 
 | File | Topic | Ingested |

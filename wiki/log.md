@@ -4,6 +4,20 @@ Append-only record of all ingestions, queries, and updates.
 
 ---
 
+## 2026-04-13 — update
+- Source: user-provided reptrack.co.in tunnel walkthrough
+- Pages affected: `cloudflare_tunnel_setup.md`
+- Notes: Added real-world section for reptrack.co.in setup on Raspberry Pi k3s. Covers existing tunnel reuse, Traefik hostname routing, remote config override gotcha, DNS migration from GoDaddy to Cloudflare, and final verification.
+
+---
+
+## 2026-04-13 — create
+- Source: user request
+- Pages created: `cloudflare_tunnel_setup.md`
+- Notes: New page covering Cloudflare Tunnel setup — install, auth, tunnel creation, config.yml, DNS routing, systemd service, Kubernetes deployment, and troubleshooting.
+
+---
+
 ## 2026-04-12 — update
 - Source: user-provided Volumes and VolumeMounts primer
 - Pages affected: `kubernetes/kubernetes.md`
