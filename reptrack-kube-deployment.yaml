@@ -10,27 +10,6 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx
-  namespace: reptrack
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-        - name: nginx
-          image: nginx:latest
-          ports:
-            - containerPort: 80
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: reptrack
   namespace: reptrack
 spec:
@@ -109,3 +88,13 @@ spec:
                 name: reptrack-service
                 port:
                   number: 80
+    - host: www.reptrack.co.in                                                                                                                                                                 
+      http:                                                                                                                                                                                  
+        paths:                                                                                                                                                                               
+          - path: /
+            pathType: Prefix
+            backend:                        
+              service:                  
+                name: reptrack-service
+                port:                                                                                                                                                                          
+                  number: 80 
