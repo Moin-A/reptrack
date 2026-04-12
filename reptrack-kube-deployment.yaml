@@ -88,7 +88,7 @@ spec:
                 name: reptrack-service
                 port:
                   number: 80
-    - host: www.reptrack.co.in                                                                                                                                                                 
+    - host: staging.reptrack.co.in                                                                                                                                                                 
       http:                                                                                                                                                                                  
         paths:                                                                                                                                                                               
           - path: /
