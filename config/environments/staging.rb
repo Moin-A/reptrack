@@ -12,8 +12,16 @@
       .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
     config.log_tags = [ :request_id ]
     config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "debug")  # More verbose than prod
-    config.action_mailer.perform_caching = false
+    config.action_mailer.perform_caching = true
     config.i18n.fallbacks = true
     config.active_support.report_deprecations = true  # Surface warnings in staging
     config.active_record.dump_schema_after_migration = false
+    config.action_mailer.smtp_settings = {
+    address:              ENV["SMTP_ADDRESS"],
+    port:                 587,
+    user_name:            ENV["SMTP_USER_NAME"],
+    password:             ENV["SMTP_PASSWORD"],
+    authentication:       :login,
+    enable_starttls_auto: true
+  }
   end
