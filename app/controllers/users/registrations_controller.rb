@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
-  prepend_before_action :require_no_authentication, only: [:new, :create, :cancel]
-  prepend_before_action :authenticate_scope!, only: [:edit, :update, :destroy]
-  prepend_before_action :set_minimum_password_length, only: [:new, :edit]
+  prepend_before_action :require_no_authentication, only: [ :new, :create, :cancel ]
+  prepend_before_action :authenticate_scope!, only: [ :edit, :update, :destroy ]
+  prepend_before_action :set_minimum_password_length, only: [ :new, :edit ]
 
   # GET /resource/sign_up
   def new
@@ -55,7 +55,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
     set_flash_message! :notice, :destroyed
     yield resource if block_given?
-    respond_with_navigational(resource){ redirect_to after_sign_out_path_for(resource_name), status: Devise.responder.redirect_status }
+    respond_with_navigational(resource) { redirect_to after_sign_out_path_for(resource_name), status: Devise.responder.redirect_status }
   end
 
   # GET /resource/cancel
@@ -123,7 +123,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :name ])
     devise_parameter_sanitizer.sanitize(:sign_up)
   end
 
@@ -132,7 +132,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def translation_scope
-    'devise.registrations'
+    "devise.registrations"
   end
 
   private
@@ -142,11 +142,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
     flash_key = if update_needs_confirmation?(resource, prev_unconfirmed_email)
                   :update_needs_confirmation
-                elsif sign_in_after_change_password?
+    elsif sign_in_after_change_password?
                   :updated
-                else
+    else
                   :updated_but_not_signed_in
-                end
+    end
     set_flash_message :notice, flash_key
   end
 
