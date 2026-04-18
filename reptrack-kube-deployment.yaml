@@ -36,6 +36,21 @@ spec:
           env:
             - name: RAILS_ENV
               value: "staging"
+            - name: SMTP_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: ses-credentials
+                  key: SMTP_ADDRESS
+            - name: SMTP_USER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: ses-credentials
+                  key: SMTP_USER_NAME
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ses-credentials
+                  key: SMTP_PASSWORD
           volumeMounts:
             - name: hosts-config
               mountPath: /rails/config/initializers/zz_hosts.rb
