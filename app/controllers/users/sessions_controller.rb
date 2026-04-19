@@ -21,7 +21,7 @@ class Users::SessionsController < Devise::SessionsController
       sign_in(resource_name, resource)
       render json: { message: "Signed in successfully.", user: { id: resource.id, email: resource.email } }, status: :ok
     else
-      render json: { errors: resource.errors.full_messages }, status: :unauthorized
+      render json: { errors: ["Invalid email or password."] }, status: :unauthorized
     end
   end
 
@@ -47,7 +47,7 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def auth_options
-    { scope: resource_name, recall: "#{controller_path}#new", locale: I18n.locale }
+    { scope: resource_name, locale: I18n.locale }
   end
 
   def translation_scope
