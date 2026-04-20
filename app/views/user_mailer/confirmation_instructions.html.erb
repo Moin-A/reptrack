@@ -1,0 +1,7 @@
+<h1>Welcome, <%= @user.email %>!</h1>
+
+<p>Please confirm your email address by clicking the link below:</p>
+
+<p><%= link_to "Confirm my account", @confirmation_url %></p>
+
+<p>If you did not create an account, please ignore this email.</p>
