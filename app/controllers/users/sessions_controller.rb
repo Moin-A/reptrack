@@ -17,11 +17,12 @@ class Users::SessionsController < Devise::SessionsController
   # POST /resource/sign_in
   def create
     self.resource = warden.authenticate(auth_options)
-    if resource
-      sign_in(resource_name, resource)
-      render json: { message: "Signed in successfully.", user: { id: resource.id, email: resource.email } }, status: :ok
-    elsif warden.message == :unconfirmed
+    puts "Warden message: #{warden.message.inspect}"
+    if warden.message == :unconfirmed
       render json: { error: "Please confirm your email address before signing in." }, status: :forbidden
+    elsif resource
+       sign_in(resource_name, resource)
+       render json: { message: "Signed in successfully.", user: { id: resource.id, email: resource.email } }, status: :ok
     else
       render json: { error: "Invalid email or password." }, status: :unauthorized
     end
