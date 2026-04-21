@@ -16,5 +16,5 @@ class UserMailer < ApplicationMailer
     @confirmation_url = confirmation_url(token: @token)
 
     mail(to: @user.email, subject: "Please confirm your email address")
-  end
+   end
 end
