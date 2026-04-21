@@ -1,4 +1,4 @@
- -n reptrack# frozen_string_literal: true
+# frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
   prepend_before_action :require_no_authentication, only: [ :new, :create, :cancel ]
@@ -17,11 +17,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
     build_resource(sign_up_params)
     resource.save
     if resource.persisted?
-      if resource.respond_to?(:confirmed?) && !resource.confirmed?
-        render json: { message: "Account created. Please check your email to confirm your account.", user: { id: resource.id, email: resource.email } }, status: :created
-      else
-        render json: { message: "Signed up successfully.", user: { id: resource.id, email: resource.email } }, status: :created
-      end
+      # token = JwtTokenService.new(resource).encode(JwtTokenService.new(resource).payload)
+      # UserMailer.confirmation_instructions(resource, token).deliver_later
+      render json: { message: "Signed up successfully.", user: { id: resource.id, email: resource.email } }, status: :created
     else
       render json: { errors: resource.errors.full_messages }, status: :unprocessable_entity
     end
