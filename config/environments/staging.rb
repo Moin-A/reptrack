@@ -16,6 +16,7 @@
     config.i18n.fallbacks = true
     config.active_support.report_deprecations = true  # Surface warnings in staging
     config.active_record.dump_schema_after_migration = false
+    config.action_mailer.default_url_options = { host: "staging.reptrack.co.in" }
     config.action_mailer.smtp_settings = {
     address:              ENV["SMTP_ADDRESS"],
     port:                 587,
