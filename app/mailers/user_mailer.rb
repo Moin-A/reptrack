@@ -13,7 +13,6 @@ class UserMailer < ApplicationMailer
   def confirmation_instructions(user, token, *args, **kwargs)
     @user = user
     @token = token
-    @confirmation_url = confirmation_url(token: @token)
 
     mail(to: @user.email, subject: "Please confirm your email address")
    end
