@@ -20,8 +20,10 @@ class Users::SessionsController < Devise::SessionsController
     if resource
       sign_in(resource_name, resource)
       render json: { message: "Signed in successfully.", user: { id: resource.id, email: resource.email } }, status: :ok
+    elsif warden.message == :unconfirmed
+      render json: { error: "Please confirm your email address before signing in." }, status: :forbidden
     else
-      render json: { errors: resource.errors.full_messages }, status: :unauthorized
+      render json: { error: "Invalid email or password." }, status: :unauthorized
     end
   end
 
