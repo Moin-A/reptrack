@@ -22,6 +22,7 @@
     port:                 587,
     user_name:            ENV["SMTP_USER_NAME"],
     password:             ENV["SMTP_PASSWORD"],
+    region: ENV.fetch("AWS_REGION", "ap-south-1"),
     authentication:       :login,
     enable_starttls_auto: true
   }
