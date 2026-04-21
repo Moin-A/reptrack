@@ -1,7 +1,144 @@
-<h1>Welcome, <%= @user.email %>!</h1>
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>Confirm your RepTrack account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #F3F1EC; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         -webkit-font-smoothing: antialiased; color: #0B0B0C; }
+  a { color: inherit; text-decoration: none; }
 
-<p>Please confirm your email address by clicking the link below:</p>
+  .shell { background: #F3F1EC; padding: 48px 20px; min-height: 100vh; }
 
-<p><%= link_to "Confirm my account", @confirmation_url %></p>
+  .card { background: #FFFFFF; border-radius: 20px; max-width: 560px; margin: 0 auto;
+          overflow: hidden; border: 1px solid #E7E4DE;
+          box-shadow: 0 8px 32px -8px rgba(0,0,0,0.10), 0 2px 8px -2px rgba(0,0,0,0.06); }
 
-<p>If you did not create an account, please ignore this email.</p>
+  .header { background: #0B0B0C; padding: 28px 36px; display: flex; align-items: center;
+            justify-content: space-between; }
+  .logo-mark { width: 36px; height: 36px; background: #FF5B1F; border-radius: 9px;
+               display: inline-flex; align-items: center; justify-content: center; }
+  .logo-word { color: white; font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin-left: 10px; }
+  .header-badge { font-size: 11px; color: #8C8C92; letter-spacing: 0.12em; text-transform: uppercase;
+                  font-family: 'Courier New', monospace; }
+
+  .body { padding: 40px 36px 32px; }
+  .eyebrow { font-size: 11.5px; color: #8C8C92; text-transform: uppercase; letter-spacing: 0.12em;
+             font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .eyebrow-dot { width: 6px; height: 6px; border-radius: 6px; background: #FF5B1F; display: inline-block; }
+  h1.headline { font-size: 28px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.15;
+                color: #0B0B0C; margin-bottom: 12px; }
+  .email-highlight { color: #FF5B1F; word-break: break-all; }
+  .body-text { font-size: 15px; color: #6B6B70; line-height: 1.6; margin-bottom: 28px; }
+
+  .cta-wrap { margin-bottom: 28px; }
+  .cta-btn { display: inline-flex; align-items: center; gap: 10px;
+             background: #FF5B1F; color: white; font-size: 15px; font-weight: 600;
+             padding: 15px 28px; border-radius: 12px; letter-spacing: -0.01em;
+             box-shadow: 0 4px 12px -2px rgba(255,91,31,0.45); }
+
+  .url-fallback { padding: 14px 16px; background: #F7F6F3; border-radius: 10px;
+                  border: 1px solid #E7E4DE; margin-bottom: 28px; }
+  .url-fallback-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+                        color: #9A9AA0; font-weight: 600; margin-bottom: 6px; }
+  .url-fallback-link { font-size: 12.5px; color: #6B6B70; word-break: break-all; line-height: 1.5; }
+
+  .divider { height: 1px; background: #E7E4DE; margin: 0 0 28px; }
+
+  .ignore-note { font-size: 13px; color: #9A9AA0; line-height: 1.55; }
+  .ignore-note strong { color: #6B6B70; }
+
+  .footer { background: #0B0B0C; padding: 24px 36px; }
+  .footer-top { display: flex; align-items: center; justify-content: space-between;
+                padding-bottom: 18px; border-bottom: 1px solid #1F1F22; margin-bottom: 16px; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-link { font-size: 12px; color: #8C8C92; }
+  .footer-copy { font-size: 11.5px; color: #5E5E62; line-height: 1.5; }
+
+  @media (max-width: 600px) {
+    .shell { padding: 24px 12px; }
+    .header, .body, .footer { padding-left: 22px; padding-right: 22px; }
+    h1.headline { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="card">
+
+    <div class="header">
+      <div style="display:flex;align-items:center">
+        <div class="logo-mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 10v4M6 7v10M9 9.5h6M18 7v10M21 10v4" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="logo-word">RepTrack</span>
+      </div>
+      <span class="header-badge">Account confirmation</span>
+    </div>
+
+    <div class="body">
+
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span> One step to go
+      </div>
+
+      <h1 class="headline">Welcome,<br/><span class="email-highlight"><%= @user.email %></span></h1>
+
+      <p class="body-text">
+        We just need to confirm this is really you.
+        Hit the button below and you'll land straight in your RepTrack dashboard — ready to add members, set up access, and get your gym running.
+      </p>
+
+      <div class="cta-wrap">
+        <%= link_to @confirmation_url, class: "cta-btn" do %>
+          Confirm my account <span style="font-size:18px">→</span>
+        <% end %>
+      </div>
+
+      <div class="url-fallback">
+        <div class="url-fallback-label">Or copy this link</div>
+        <div class="url-fallback-link"><%= @confirmation_url %></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="ignore-note">
+        <strong>Didn't create an account?</strong> You can safely ignore this email — no account will be activated without clicking the link above.
+        This link expires in <strong>24 hours</strong>.
+      </p>
+
+    </div>
+
+    <div class="footer">
+      <div class="footer-top">
+        <div style="display:flex;align-items:center">
+          <div class="logo-mark" style="width:26px;height:26px;border-radius:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 10v4M6 7v10M9 9.5h6M18 7v10M21 10v4" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span style="color:#8C8C92;font-size:13px;font-weight:600;margin-left:8px">RepTrack</span>
+        </div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Help</a>
+          <a href="#" class="footer-link">Privacy</a>
+          <a href="#" class="footer-link">Unsubscribe</a>
+        </div>
+      </div>
+      <p class="footer-copy">
+        You're receiving this because an account was created with this email address.<br/>
+        &copy; <%= Time.current.year %> RepTrack. All rights reserved.
+      </p>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
