@@ -18,7 +18,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     resource.save
     if resource.persisted?
       token = JwtTokenService.new(resource).encode(JwtTokenService.new(resource).payload)
-      UserMailer.confirmation_instructions(resource, token).deliver_later
+      # UserMailer.confirmation_instructions(resource, token).deliver_later
       render json: { message: "Signed up successfully.", user: { id: resource.id, email: resource.email } }, status: :created
     else
       render json: { errors: resource.errors.full_messages }, status: :unprocessable_entity
