@@ -17,7 +17,6 @@ class Users::SessionsController < Devise::SessionsController
   # POST /resource/sign_in
   def create
     self.resource = warden.authenticate(auth_options)
-    puts "Warden message: #{warden.message.inspect}"
     if warden.message == :unconfirmed
       render json: { error: "Please confirm your email address before signing in." }, status: :forbidden
     elsif resource
@@ -34,6 +33,14 @@ class Users::SessionsController < Devise::SessionsController
     set_flash_message! :notice, :signed_out if signed_out
     yield if block_given?
     respond_to_on_destroy(non_navigational_status: :no_content)
+  end
+
+  def me
+    if current_user
+      render json: { user: { id: current_user.id, email: current_user.email } }, status: :ok
+    else
+      render json: { error: "Not authenticated" }, status: :unauthorized
+    end
   end
 
   protected
@@ -78,11 +85,6 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def respond_to_on_destroy(non_navigational_status: :no_content)
-    # We actually need to hardcode this as Rails default responder doesn't
-    # support returning empty response on GET request
-    respond_to do |format|
-      format.all { head non_navigational_status }
-      format.any(*navigational_formats) { redirect_to after_sign_out_path_for(resource_name), status: Devise.responder.redirect_status }
-    end
+    head non_navigational_status
   end
 end
