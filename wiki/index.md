@@ -29,6 +29,14 @@ Master catalog of all pages.
 
 ---
 
+## Ruby
+
+| Page | Summary |
+|------|---------|
+| [super-collector-pattern](ruby/super-collector-pattern.md) | Pattern where each class contributes its own values and `super` accumulates them across the ancestor chain |
+
+---
+
 ## Sources
 
 | File | Topic | Ingested |
