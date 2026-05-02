@@ -1,5 +1,6 @@
 class TasksController < ApplicationController
   before_action :set_task, only: %i[ show update destroy ]
+  before_action :log_params
 
   # GET /tasks
   def index
@@ -45,5 +46,9 @@ class TasksController < ApplicationController
     # Only allow a list of trusted parameters through.
     def task_params
       params.require(:task).permit(:name, :description, :due_date, :status)
+    end
+
+    def log_params
+      Rails.logger.debug "PARAMS: #{params.inspect}"
     end
 end
