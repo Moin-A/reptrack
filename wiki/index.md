@@ -34,6 +34,8 @@ Master catalog of all pages.
 | Page | Summary |
 |------|---------|
 | [super-collector-pattern](ruby/super-collector-pattern.md) | Pattern where each class contributes its own values and `super` accumulates them across the ancestor chain |
+| [rails-core-ext-and-validations](ruby/rails-core-ext-and-validations.md) | Where validators are defined, how `validates` processes arguments internally, open classes, and core_ext loading |
+| [has-one-association](ruby/has-one-association.md) | How `has_one` is defined, how it processes arguments, scope lambda, and full options list |
 
 ---
 

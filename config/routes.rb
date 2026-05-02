@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resources :tasks
+  resources :users, only: [:index]
   devise_for :users, controllers: {
     sessions: "users/sessions",
     registrations: "users/registrations",

@@ -4,6 +4,14 @@ Append-only record of all ingestions, queries, and updates.
 
 ---
 
+## 2026-04-30 — update
+- Source: conversation — ActiveRecord internals exploration
+- Pages affected: `ruby/rails-core-ext-and-validations.md`, `index.md`
+- Pages created: `ruby/has-one-association.md`
+- Notes: Added `validates` internal argument processing (extract_options!, slice!, validator loop). Created new page covering `has_one` — method signature, argument processing, builder/reflection flow, class method lookup chain, scope lambda, and full options/dependent table.
+
+---
+
 ## 2026-04-13 — update
 - Source: user-provided reptrack.co.in tunnel walkthrough
 - Pages affected: `cloudflare_tunnel_setup.md`

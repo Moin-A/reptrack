@@ -3,12 +3,7 @@ class TasksController < ApplicationController
 
   # GET /tasks
   def index
-    render json: {
-      tasks: Task.all,
-      metadata: {
-        buckets: Reptrack.config.task_buckets
-      }
-    }
+    render json: { buckets: TaskSerializer.grouped_by_bucket }
   end
 
   # GET /tasks/1
