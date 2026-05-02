@@ -1,3 +1,2 @@
 class AppConfiguration < Reptrack::Configuration
-
-end 
+end

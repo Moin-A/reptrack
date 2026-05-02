@@ -19,7 +19,7 @@ RSpec.describe Reptrack::Preferences::Preferable do
 
   describe ".defined_preferences" do
     it "returns all preferences defined on the class" do
-      expect(klass.defined_preferences).to eq([:theme, :locale])
+      expect(klass.defined_preferences).to eq([ :theme, :locale ])
     end
 
     context "with inheritance" do
@@ -30,12 +30,12 @@ RSpec.describe Reptrack::Preferences::Preferable do
       end
 
       it "accumulates parent and child preferences" do
-        expect(child_class.defined_preferences).to eq([:theme, :locale, :notifications])
+        expect(child_class.defined_preferences).to eq([ :theme, :locale, :notifications ])
       end
 
       it "does not pollute the parent's defined_preferences" do
         child_class
-        expect(klass.defined_preferences).to eq([:theme, :locale])
+        expect(klass.defined_preferences).to eq([ :theme, :locale ])
       end
     end
   end

@@ -72,7 +72,7 @@ RSpec.describe Reptrack::Preferences::Persistable do
   describe "Preferable interface" do
     it "exposes defined_preferences from Preferable" do
       instance = klass.new
-      expect(instance.defined_preferences).to eq([:theme, :locale])
+      expect(instance.defined_preferences).to eq([ :theme, :locale ])
     end
 
     it "can get and set preferences" do

@@ -18,7 +18,7 @@ module Reptrack
       def default_preferences
         Hash[
           defined_preferences.map do |name|
-            [name, send(self.class.preference_default_getter_method_name(name))]
+            [ name, send(self.class.preference_default_getter_method_name(name)) ]
           end
         ]
       end

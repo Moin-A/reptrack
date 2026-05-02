@@ -1,8 +1,8 @@
 class JwtTokenService
-  PAYLOAD_EXPIRATION = Time.now.to_i + 300;
+  PAYLOAD_EXPIRATION = Time.now.to_i + 300
   HMAC_SECRET = Rails.application.secret_key_base
-  JWT_ALGORITHM = 'HS256'
-  JWT_TYPE = 'JWT'
+  JWT_ALGORITHM = "HS256"
+  JWT_TYPE = "JWT"
 
   def initialize(user)
     @user = user
