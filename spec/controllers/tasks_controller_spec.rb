@@ -1,8 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe TasksController, type: :controller do
+
   let(:valid_attributes) { { name: "Fix login bug", description: "Investigate OAuth", due_date: 3.days.from_now, status: 0 } }
   let(:invalid_attributes) { { name: "" } }
+  let(:user) { create(:user, confirmed_at: Time.now) }
+
+  before do
+    sign_in user
+  end
 
   describe "GET #index" do
     it "returns a successful response" do
@@ -11,7 +17,7 @@ RSpec.describe TasksController, type: :controller do
     end
 
     it "returns tasks grouped by bucket" do
-      task = create(:task, bucket: :today)
+      task = create(:task, bucket: :today, user: user)
       get :index
       json = JSON.parse(response.body)
       expect(json["buckets"]).to be_a(Hash)
@@ -27,7 +33,7 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "GET #show" do
-    let(:task) { create(:task) }
+    let(:task) { create(:task, user: user) }
 
     it "returns a successful response" do
       get :show, params: { id: task.id }
@@ -70,7 +76,7 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "PATCH #update" do
-    let(:task) { create(:task) }
+    let(:task) { create(:task, user: user) }
 
     context "with valid parameters" do
       it "updates the task" do
@@ -98,7 +104,7 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let!(:task) { create(:task) }
+    let!(:task) { create(:task, user: user) }
 
     it "destroys the task" do
       expect {
