@@ -1,6 +1,7 @@
 class Task < ApplicationRecord
   validates :name, presence: { message: "must be Provided" }
   belongs_to :assignee, class_name: "User", foreign_key: :assignee_id, optional: true
+  belongs_to :user
   scope :assigned_to, ->(user) { where(assignee_id: user.id) }
   scope :in_bucket, ->(bucket) { where(bucket: bucket) }
   before_update :set_due_date

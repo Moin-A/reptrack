@@ -15,6 +15,7 @@ class TasksController < ApplicationController
   # POST /tasks
   def create
     @task = Task.new(task_params)
+    @task.user = current_user
     if @task.save
       render json: TaskSerializer.normalize(@task), status: :created, location: @task
     else
@@ -44,7 +45,7 @@ class TasksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def task_params
-      params.require(:task).permit(:name, :description, :due_date, :status, :bucket)
+      params.require(:task).permit(:name, :description, :due_date, :status, :bucket, :assignee_id)
     end
 
     def log_params

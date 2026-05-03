@@ -3,6 +3,14 @@ class TaskSerializer
 
   attributes :id, :name, :description, :due_date, :status, :bucket
 
+  attribute :user do |task|
+    task.user && { id: task.user.id, name: task.user.name, email: task.user.email }
+  end
+
+  attribute :assignee do |task|
+    task.assignee && { id: task.assignee.id, name: task.assignee.name, email: task.assignee.email }
+  end
+
   def self.normalize(task)
     new(task).serializable_hash[:data][:attributes]
   end

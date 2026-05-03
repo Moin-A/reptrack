@@ -4,6 +4,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   prepend_before_action :require_no_authentication, only: [ :new, :create, :cancel ]
   prepend_before_action :authenticate_scope!, only: [ :edit, :update, :destroy ]
   prepend_before_action :set_minimum_password_length, only: [ :new, :edit ]
+  before_action :configure_sign_up_params, only: [ :create ]
 
   # GET /resource/sign_up
   def new
@@ -124,8 +125,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
     resource_class.sign_in_after_change_password
   end
 
-  def sign_up_params
+  def configure_sign_up_params
     devise_parameter_sanitizer.permit(:sign_up, keys: [ :name ])
+  end
+
+  def sign_up_params
     devise_parameter_sanitizer.sanitize(:sign_up)
   end
 
