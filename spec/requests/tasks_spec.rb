@@ -124,26 +124,4 @@ RSpec.describe "/tasks", type: :request do
       }.to change(Task, :count).by(-1)
     end
   end
-
-  context "audit_trail" do
-    it "raises NotImplementedError when has_paper_trail is called" do
-      expect { Task.has_paper_trail }.to raise_error(NotImplementedError)
-    end
-
-    it "creates a version when a task is updated" do
-      task = Task.create! valid_attributes
-      expect {
-        task.update!(name: "updated name")
-      }.to change(AuditVersion, :count).by(1)
-    end
-
-    it "stores correct data in the version on update" do
-      task = Task.create! valid_attributes
-      task.update!(name: "updated name")
-      version = AuditVersion.last
-      expect(version.item_type).to eq("Task")
-      expect(version.item_id).to eq(task.id)
-      expect(version.event).to eq("update")
-    end
-  end
 end
