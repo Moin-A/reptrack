@@ -37,6 +37,13 @@ RSpec.describe Audit::AuditTrail, type: :model do
       expect(klass.audit_trail).to respond_to(:model_class)
       expect(klass.audit_trail.model_class).to eq(klass)
     end
+
+    it "sets paper_trail_options as a class attribute on the model after has_paper_trail is called" do
+      klass.has_paper_trail
+
+      expect(klass).to respond_to(:paper_trail_options)
+      expect(klass.paper_trail_options).to be_a(Hash)
+    end
   end
 
   it "stores correct data in the version on update" do

@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe TasksController, type: :controller do
-
   let(:valid_attributes) { { name: "Fix login bug", description: "Investigate OAuth", due_date: 3.days.from_now, status: 0 } }
   let(:invalid_attributes) { { name: "" } }
   let(:user) { create(:user, confirmed_at: Time.now) }
