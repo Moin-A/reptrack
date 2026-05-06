@@ -25,6 +25,21 @@ RSpec.describe Audit::AuditTrail, type: :model do
     }.to change(AuditVersion, :count).by(1)
   end
 
+  context "versions option" do
+    before { stub_const("DummyModel", Class.new(ApplicationRecord)) }
+
+    it "raises a deprecation warning when versions option is not a hash" do
+      expect_any_instance_of(ActiveSupport::Deprecation).to receive(:warn)
+      DummyModel.has_paper_trail(versions: :my_versions)
+    end
+
+    it "accepts versions option as a hash" do
+      expect {
+        DummyModel.has_paper_trail(versions: { name: :my_versions })
+      }.not_to raise_error
+    end
+  end
+
   context "model_config" do
     before { stub_const("DummyModel", Class.new(ApplicationRecord)) }
     let(:klass) { DummyModel }
