@@ -64,13 +64,13 @@ RSpec.describe Audit::AuditTrail, type: :model do
       it "defaults to 'Audit::Version' when no class_name is given" do
         klass.has_paper_trail
 
-        expect(klass.versions_class_name).to eq("Audit::Version")
+        expect(klass.version_class_name).to eq("Audit::Version")
       end
 
       it "uses the provided class_name from versions options" do
         klass.has_paper_trail(versions: { class_name: "MyCustomVersion" })
 
-        expect(klass.versions_class_name).to eq("MyCustomVersion")
+        expect(klass.version_class_name).to eq("MyCustomVersion")
       end
     end
 
