@@ -59,6 +59,34 @@ RSpec.describe Audit::AuditTrail, type: :model do
       expect(klass).to respond_to(:paper_trail_options)
       expect(klass.paper_trail_options).to be_a(Hash)
     end
+
+    context "version_class_name" do
+      it "defaults to 'Audit::Version' when no class_name is given" do
+        klass.has_paper_trail
+
+        expect(klass.versions_class_name).to eq("Audit::Version")
+      end
+
+      it "uses the provided class_name from versions options" do
+        klass.has_paper_trail(versions: { class_name: "MyCustomVersion" })
+
+        expect(klass.versions_class_name).to eq("MyCustomVersion")
+      end
+    end
+
+    context "versions_association_name" do
+      it "defaults to :versions when no name is given" do
+        klass.has_paper_trail
+
+        expect(klass.versions_association_name).to eq(:versions)
+      end
+
+      it "uses the provided name from versions options" do
+        klass.has_paper_trail(versions: { name: :my_versions })
+
+        expect(klass.versions_association_name).to eq(:my_versions)
+      end
+    end
   end
 
   it "stores correct data in the version on update" do
