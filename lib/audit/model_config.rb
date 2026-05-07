@@ -16,7 +16,7 @@ module Audit
 
    def on_create
       @model_class.after_create { |r|
-        r.audit_trail.record_create if r.paper_trail.save_version?
+        r.audit_trail.record_create if r.audit_trail.save_version?
       }
       append_option_uniquely(:on, :create)
    end
@@ -54,6 +54,7 @@ module Audit
         @model_class.class_attribute :has_many_association_name
         @model_class.has_many_association_name = options[:version] || :version
         @model_class.send :attr_accessor, @model_class.has_many_association_name
+        @model_class.send :attr_accessor, :audit_trail_event
         @model_class.include Audit::AuditTrail
 
         define_has_many_versions(options)
@@ -78,7 +79,7 @@ module Audit
 
 
     def get_versions_scope(options)
-      options[:versions][:scope] || -> { order(model.timestamp_sort_order) }
+      options[:versions][:scope] || -> { order(created_at: :asc) }
     end
 
    def check_has_many_class_name(options)
