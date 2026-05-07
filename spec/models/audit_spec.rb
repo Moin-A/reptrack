@@ -102,6 +102,21 @@ RSpec.describe Audit::AuditTrail, type: :model do
     end
   end
 
+  context "Audit::Events::Create" do
+    it "creates a version record when a task is created" do
+      expect {
+        create(:task)
+      }.to change(Audit::Version, :count).by(1)
+    end
+
+    it "sets whodunnit on the version from Audit::Request" do
+      Audit::Request.with(whodunnit: "alice@example.com") do
+        create(:task)
+      end
+      expect(Audit::Version.last.whodunnit).to eq("alice@example.com")
+    end
+  end
+
   it "stores correct data in the version on update" do
     task = Task.create! valid_attributes
     task.update!(name: "updated name")

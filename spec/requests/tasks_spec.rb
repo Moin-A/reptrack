@@ -48,6 +48,22 @@ RSpec.describe "/tasks", type: :request do
     end
   end
 
+  describe "POST /create - audit trail" do
+    let(:user) { create(:user, confirmed_at: Time.current) }
+    let(:task_params) { { name: "Audit task", description: "test", status: 1 } }
+
+    it "creates a version record and sets whodunnit to the signed-in user" do
+      sign_in user
+      expect {
+        post tasks_url, params: { task: task_params }, as: :json
+      }.to change(Audit::Version, :count).by(1)
+
+      version = Audit::Version.last
+      expect(version.event).to eq("create")
+      expect(version.whodunnit).to eq(user.id.to_s)
+    end
+  end
+
   describe "POST /create" do
     context "with valid parameters" do
       it "creates a new Task" do
