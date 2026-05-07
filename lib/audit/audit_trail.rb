@@ -18,5 +18,9 @@ module Audit
         @_audit_trail ||= ModelConfig.new(self)
       end
     end
+
+    def audit_trail
+      RecordTrail.new(self)
+    end
   end
 end

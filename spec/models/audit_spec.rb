@@ -41,8 +41,8 @@ RSpec.describe Audit::AuditTrail, type: :model do
   end
 
   context "model_config" do
-    before { stub_const("DummyModel", Class.new(ApplicationRecord)) }
-    let(:klass) { DummyModel }
+    before { stub_const("Task", Class.new(ApplicationRecord)) }
+    let(:klass) { Task }
 
     it "has instance method audit_trail" do
       expect(klass).to respond_to(:audit_trail)
@@ -53,11 +53,11 @@ RSpec.describe Audit::AuditTrail, type: :model do
       expect(klass.audit_trail.model_class).to eq(klass)
     end
 
-    it "sets paper_trail_options as a class attribute on the model after has_paper_trail is called" do
+    it "sets audit_trail_options as a class attribute on the model after has_paper_trail is called" do
       klass.has_paper_trail
 
-      expect(klass).to respond_to(:paper_trail_options)
-      expect(klass.paper_trail_options).to be_a(Hash)
+      expect(klass).to respond_to(:audit_trail_options)
+      expect(klass.audit_trail_options).to be_a(Hash)
     end
 
     context "version_class_name" do
@@ -85,6 +85,19 @@ RSpec.describe Audit::AuditTrail, type: :model do
         klass.has_paper_trail(versions: { name: :my_versions })
 
         expect(klass.versions_association_name).to eq(:my_versions)
+      end
+    end
+
+    context "record trail" do
+      it "instance has a audit_trail method after has_paper_trail is called" do
+        klass.has_paper_trail
+        expect(klass.new).to respond_to(:audit_trail)
+      end
+
+      it "audit_trail is an instance of Audit::RecordTrail" do
+        klass.has_paper_trail
+
+        expect(klass.new.audit_trail).to be_a(Audit::RecordTrail)
       end
     end
   end
