@@ -10,6 +10,6 @@ class AddVersionTable < ActiveRecord::Migration[7.2]
       t.text     :object,     limit: TEXT_BYTES
       t.datetime :created_at
     end
-    add_index :audit_versions, [:item_type, :item_id]
+    add_index :audit_versions, [ :item_type, :item_id ]
   end
 end

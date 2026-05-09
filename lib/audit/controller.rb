@@ -22,6 +22,5 @@ module Audit
         ::Audit::Request.whodunnit = user_for_audit
       end
     end
-
   end
 end

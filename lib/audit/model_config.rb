@@ -58,7 +58,6 @@ module Audit
         @model_class.include Audit::AuditTrail
 
         define_has_many_versions(options)
-
    end
 
    def define_has_many_versions(options)
@@ -67,7 +66,7 @@ module Audit
     check_has_many_association_name(options)
 
     scope = get_versions_scope(options)
-    
+
      @model_class.has_many(
         @model_class.versions_association_name,
         scope,
@@ -90,7 +89,6 @@ module Audit
    def check_has_many_association_name(options)
     @model_class.class_attribute :versions_association_name
     @model_class.versions_association_name = options[:versions][:name] || :versions
-
    end
 
    def setup_options(options)
@@ -105,7 +103,7 @@ module Audit
    end
 
    def event_attribute_option(option_name)
-      [@model_class.audit_trail_options[option_name]].
+      [ @model_class.audit_trail_options[option_name] ].
         flatten.
         compact.
         map { |attr| attr.is_a?(Hash) ? attr.stringify_keys : attr.to_s }

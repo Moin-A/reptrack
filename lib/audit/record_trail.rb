@@ -11,7 +11,7 @@ module Audit
          end
 
         def track_changes
-            # Logic to track changes for the @record
+          # Logic to track changes for the @record
         end
 
         def record_update
@@ -26,7 +26,7 @@ module Audit
         end
 
         def record_destroy
-        end 
+        end
 
         def handle_version_errors(e, version, event)
             raise e

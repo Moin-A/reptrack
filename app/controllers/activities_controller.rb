@@ -1,7 +1,6 @@
 class ActivitiesController < ApplicationController
-
   def index
-    render json: {groups: ActivitiesSerializer.normalize }
+    render json: { groups: ActivitiesSerializer.normalize }
   end
 
 

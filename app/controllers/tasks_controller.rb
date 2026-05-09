@@ -1,4 +1,4 @@
-class TasksController < ApplicationController
+  class TasksController < ApplicationController
   before_action :set_task, only: %i[ show update destroy ]
   before_action :log_params
 
@@ -51,4 +51,4 @@ class TasksController < ApplicationController
     def log_params
       Rails.logger.debug "PARAMS: #{params.inspect}"
     end
-end
+  end

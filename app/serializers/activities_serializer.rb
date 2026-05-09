@@ -3,7 +3,7 @@ class ActivitiesSerializer
   attribute :id, :whodunnit, :event, :item_id, :entity, :entity_type
 
   def self.normalize
-    new(Audit::Version.all).serializable_hash[:data].map{|r| r[:attributes]}
+    new(Audit::Version.all).serializable_hash[:data].map { |r| r[:attributes] }
   end
 
   attribute :whodunnit do |task|
@@ -17,5 +17,4 @@ class ActivitiesSerializer
   attribute :entity do |task|
     task.item
   end
-  
 end
