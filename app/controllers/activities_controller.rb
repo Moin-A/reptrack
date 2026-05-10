@@ -18,6 +18,6 @@ class ActivitiesController < ApplicationController
   end
 
   def activities_params
-    params.require(:activity).permit(:by, :when, :show)
+    params.fetch(:activity, {}).permit(:by, :when, :show)
   end
 end

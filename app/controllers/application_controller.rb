@@ -5,7 +5,6 @@ class ApplicationController < ActionController::API
 
 
   def index
-    binding.pry
     render json: { message: "Hello, world!" }
   end
 
