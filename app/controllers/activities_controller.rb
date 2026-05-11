@@ -1,6 +1,8 @@
 class ActivitiesController < ApplicationController
   def index
-    render json: { groups: ActivitiesSerializer.normalize(filtered_users) }
+    result = { groups: ActivitiesSerializer.normalize(filtered_users) }
+    Rails.logger.info "-----| ActivitiesController#index response: #{result.to_json} |-----"
+    render json: result
   end
 
 
