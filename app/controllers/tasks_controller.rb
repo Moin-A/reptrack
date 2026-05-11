@@ -26,7 +26,7 @@
   # PATCH/PUT /tasks/1
   def update
     if @task.update(task_params)
-      render json: @task
+      render json: TaskSerializer.normalize(@task)
     else
       render json: @task.errors, status: :unprocessable_content
     end
