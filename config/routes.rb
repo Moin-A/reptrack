@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resources :tasks
+  resources :accounts
   resources :users, only: [ :index ]
   resources :activities, only: [ :index ]
   devise_for :users, controllers: {
