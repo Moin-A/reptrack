@@ -1,6 +1,6 @@
  class AccountsController < ApplicationController
   def index
-    render json: { accounts: AccountSerializer.normalize_all(accounts) }
+    render json: { accounts: AccountSerializer.normalize_records(accounts) }
   end
 
   def create
