@@ -6,7 +6,7 @@
   def create
     account = Account.new(accounts_params)
     if account.save
-      render json: AccountSerializer.normalize([ account ]).first, status: :created
+      render json: AccountSerializer.normalize(account), status: :created
     else
       render json: { errors: account.errors.full_messages }, status: :unprocessable_entity
     end
