@@ -1,12 +1,6 @@
 require_relative "boot"
 
-require "rails"
-require "active_record/railtie"
-require "active_storage/engine"
-require "active_job/railtie"
-require "action_controller/railtie"
-require "action_mailer/railtie"
-require "rails/test_unit/railtie"
+require "rails/all"
 require_relative "../lib/reptrack"
 require_relative "../app/middleware/hello_middleware"
 require_relative "../lib/audit/audit_trail"
