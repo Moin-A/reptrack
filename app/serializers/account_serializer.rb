@@ -8,6 +8,3 @@ class AccountSerializer
      records.map { |r| normalize(r) }
   end
 end
-
-
-

@@ -1,7 +1,6 @@
 module Audit
   module Events
     class Base
-
       attr_accessor :record, :in_after_callback
 
       def initialize(record, in_after_callback = true)
@@ -15,7 +14,6 @@ module Audit
 
       def recordable_object(ar)
       end
-
     end
   end
 end

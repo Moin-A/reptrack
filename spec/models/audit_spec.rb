@@ -120,7 +120,7 @@ RSpec.describe Audit::AuditTrail, type: :model do
     after do
       Audit::Request.whodunnit = nil
     end
-    
+
     it "creates a version record when a task is created" do
       expect {
         create(:task)

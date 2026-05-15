@@ -63,7 +63,7 @@
     def pagination_params
       allowed = Task.buckets.keys.map(&:to_sym)
       params.fetch(:pagination, {}).permit(
-          allowed.index_with { [:page_no, :per_page] }
+          allowed.index_with { [ :page_no, :per_page ] }
       )
     end
 

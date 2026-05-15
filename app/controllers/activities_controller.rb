@@ -3,7 +3,7 @@ class ActivitiesController < ApplicationController
     pagy, versions = pagy(filtered_users, limit: 10)
     result = { groups: ActivitiesSerializer.normalize(versions), meta: pagy  }
     render json: result
-  end  
+  end
 
   private
 

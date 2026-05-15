@@ -11,17 +11,17 @@ class TaskSerializer
     task.assignee && { id: task.assignee.id, name: task.assignee.name, email: task.assignee.email }
   end
 
-  
+
 
   def self.grouped_by_bucket(&block)
     pagy_by_bucket = {}
     tasks_lists = Task.buckets.keys.to_h do |bucket|
       pagy, list = paginate_list(bucket, &block)
       pagy_by_bucket[bucket] = pagy
-      [bucket, normalised_list(list)]
+      [ bucket, normalised_list(list) ]
     end
 
-    [tasks_lists, pagy_by_bucket]
+    [ tasks_lists, pagy_by_bucket ]
   end
 
   private
