@@ -1,7 +1,14 @@
 require_relative "boot"
 
-require "rails/all"
+require "rails"
+require "active_record/railtie"
+require "active_storage/engine"
+require "active_job/railtie"
+require "action_controller/railtie"
+require "action_mailer/railtie"
+require "rails/test_unit/railtie"
 require_relative "../lib/reptrack"
+require_relative "../app/middleware/hello_middleware"
 require_relative "../lib/audit/audit_trail"
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -16,6 +23,7 @@ module Reptrack
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
+    config.autoload_paths << Rails.root.join("app/serializers/concerns")
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -33,5 +41,6 @@ module Reptrack
     # Re-add cookie/session middleware (stripped by api_only = true)
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore, key: "_reptrack_session"
+    config.middleware.use HelloMiddleware
   end
 end

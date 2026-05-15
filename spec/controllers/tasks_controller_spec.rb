@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe TasksController, type: :controller do
   let(:valid_attributes) { { name: "Fix login bug", description: "Investigate OAuth", due_date: 3.days.from_now, status: 0 } }
   let(:invalid_attributes) { { name: "" } }
+  let(:pagination_params) { Task.buckets.keys.index_with(1) }
   let(:user) { create(:user, confirmed_at: Time.now) }
 
   before do
@@ -11,20 +12,20 @@ RSpec.describe TasksController, type: :controller do
 
   describe "GET #index" do
     it "returns a successful response" do
-      get :index
+      get :index, params: { pagination: pagination_params }
       expect(response).to have_http_status(:ok)
     end
 
     it "returns tasks grouped by bucket" do
       task = create(:task, bucket: :today, user: user)
-      get :index
+      get :index, params: { pagination: pagination_params }
       json = JSON.parse(response.body)
       expect(json["buckets"]).to be_a(Hash)
       expect(json["buckets"]["today"].first["id"]).to eq(task.id)
     end
 
     it "includes all buckets even when empty" do
-      get :index
+      get :index, params: { pagination: pagination_params }
       json = JSON.parse(response.body)
       expected_buckets = Task.buckets.keys.map(&:to_s)
       expect(json["buckets"].keys).to match_array(expected_buckets)

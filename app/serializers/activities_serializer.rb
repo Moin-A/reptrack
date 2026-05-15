@@ -7,7 +7,7 @@ class ActivitiesSerializer
   end
 
   attribute :whodunnit do |task|
-    User.find(task.whodunnit)
+    task.user
   end
 
   attribute :entity_type do |task|

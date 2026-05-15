@@ -4,6 +4,15 @@ RSpec.describe Audit::AuditTrail, type: :model do
   let(:valid_attributes) {
     skip("Add a hash of attributes valid for your model")
   }
+  let(:user) { create(:user, confirmed_at: Time.now) }
+
+  before do
+    Audit::Request.whodunnit = user.id
+  end
+
+  after do
+    Audit::Request.whodunnit = nil
+  end
 
   it "succeeds when has_paper_trail is called for the first time" do
     klass = Class.new(ApplicationRecord)
@@ -103,6 +112,15 @@ RSpec.describe Audit::AuditTrail, type: :model do
   end
 
   context "Audit::Events::Create" do
+    let(:user) { create(:user, confirmed_at: Time.now) }
+    before do
+      Audit::Request.whodunnit = user.id
+    end
+
+    after do
+      Audit::Request.whodunnit = nil
+    end
+    
     it "creates a version record when a task is created" do
       expect {
         create(:task)

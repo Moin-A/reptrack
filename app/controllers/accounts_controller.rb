@@ -1,7 +1,7 @@
  class AccountsController < ApplicationController
 
   def index
-    render json: { accounts: AccountSerializer.normalize(accounts) }
+    render json: { accounts: AccountSerializer.normalize_all(accounts) }
   end
 
   def create
@@ -9,7 +9,7 @@
     if account.save
       render json: AccountSerializer.normalize([account]).first, status: :created
     else
-      render json: account.errors, status: :unprocessable_entity
+      render json: { errors: account.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -18,7 +18,7 @@
     if account.update(accounts_params)
       render json: AccountSerializer.normalize([account]).first
     else
-      render json: account.errors, status: :unprocessable_entity
+      render json: { errors: account.errors.full_messages }, status: :unprocessable_entity
     end
   end
 

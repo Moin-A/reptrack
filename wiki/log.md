@@ -4,6 +4,22 @@ Append-only record of all ingestions, queries, and updates.
 
 ---
 
+## 2026-05-13 — create
+- Source: conversation — session cookie security discussion
+- Pages created: `security/session-cookies.md`
+- Pages affected: `index.md`
+- Notes: Covers cookie contents, encryption, HttpOnly behaviour, session hijacking vectors, and hardening recommendations for reptrack's Devise + Next.js setup.
+
+---
+
+## 2026-05-13 — create
+- Source: live k6 stress test session
+- Pages created: `load-testing/realtime-load-testing-case-study.md`
+- Pages affected: `index.md`
+- Notes: Documented audit_test.js results — login → create task → update task → verify audit versions flow. Breaking point ~114 VUs, 41% timeout rate, 100% check pass rate. Key findings: bcrypt/worker bottleneck, unbounded Audit::Version.all query, PaperTrail double writes.
+
+---
+
 ## 2026-04-30 — update
 - Source: conversation — ActiveRecord internals exploration
 - Pages affected: `ruby/rails-core-ext-and-validations.md`, `index.md`

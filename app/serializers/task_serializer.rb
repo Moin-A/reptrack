@@ -1,6 +1,6 @@
 class TaskSerializer
   include JSONAPI::Serializer
-
+  include Normalizable
   attributes :id, :name, :description, :due_date, :status, :bucket
 
   attribute :user do |task|
@@ -11,14 +11,30 @@ class TaskSerializer
     task.assignee && { id: task.assignee.id, name: task.assignee.name, email: task.assignee.email }
   end
 
-  def self.normalize(task)
-    new(task).serializable_hash[:data][:attributes]
+  
+
+  def self.grouped_by_bucket(&block)
+    pagy_by_bucket = {}
+    tasks_lists = Task.buckets.keys.to_h do |bucket|
+      pagy, list = paginate_list(bucket, &block)
+      pagy_by_bucket[bucket] = pagy
+      [bucket, normalised_list(list)]
+    end
+
+    [tasks_lists, pagy_by_bucket]
   end
 
-  def self.grouped_by_bucket
-    Task.buckets.keys.to_h do |bucket|
-    tasks = new(Task.in_bucket(bucket)).serializable_hash[:data].map { |t| t[:attributes] }
-        [ bucket, tasks ]
+  private
+  def self.normalised_list(list)
+    list.map { |t| normalize(t) }
+  end
+
+  def self.paginate_list(bucket)
+    if block_given?
+      yield(bucket)
+    else
+      page = pagination_params.dig(bucket.to_sym, :page_no) || 1
+      pagy(Task.in_bucket(bucket), page: page, limit: 5)
     end
   end
 end

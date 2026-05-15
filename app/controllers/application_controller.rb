@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  include Pagy::Backend
   include ActionController::Cookies
   include Audit::Controller
   before_action :set_audit_whodunnit

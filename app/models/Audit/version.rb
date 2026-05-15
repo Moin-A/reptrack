@@ -1,5 +1,6 @@
 module Audit
   class Version < ApplicationRecord
+    belongs_to :user, class_name: "User", foreign_key: "whodunnit", optional: true
     self.table_name = "audit_versions"
     belongs_to :item, polymorphic: true, optional: true
     scope :performed_by, ->(id) { where(whodunnit: id) }

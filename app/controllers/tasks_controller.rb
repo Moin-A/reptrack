@@ -4,7 +4,15 @@
 
   # GET /tasks
   def index
-    render json: { buckets: TaskSerializer.grouped_by_bucket }
+    buckets, pagy_by_bucket = TaskSerializer.grouped_by_bucket do |bucket|
+      pagy(Task.in_bucket(bucket), page: page(bucket), limit: 5)
+    end
+
+    pagination = pagy_by_bucket.transform_values do |p|
+      { page_no: p.page, total_items: p.count, per_page: p.limit }
+    end
+
+    render json: { buckets: buckets, pagination: pagination }
   end
 
   # GET /tasks/1
@@ -43,9 +51,20 @@
       @task = Task.find(params[:id])
     end
 
+    def page(bucket)
+      pagination_params.dig(bucket.to_sym, :page_no) || 1
+    end
+
     # Only allow a list of trusted parameters through.
     def task_params
       params.require(:task).permit(:name, :description, :due_date, :status, :bucket, :assignee_id)
+    end
+
+    def pagination_params
+      allowed = Task.buckets.keys.map(&:to_sym)
+      params.fetch(:pagination, {}).permit(
+          allowed.index_with { [:page_no, :per_page] }
+      )
     end
 
     def log_params

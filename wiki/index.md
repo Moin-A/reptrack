@@ -39,6 +39,22 @@ Master catalog of all pages.
 
 ---
 
+## Security
+
+| Page | Summary |
+|------|---------|
+| [session-cookies](security/session-cookies.md) | How Devise session cookies work, what they contain, attack vectors, and hardening recommendations |
+
+---
+
+## Load Testing
+
+| Page | Summary |
+|------|---------|
+| [realtime-load-testing-case-study](load-testing/realtime-load-testing-case-study.md) | End-to-end k6 stress tests against reptrack — login, task create/update, audit version verification, and optimization findings |
+
+---
+
 ## Sources
 
 | File | Topic | Ingested |
