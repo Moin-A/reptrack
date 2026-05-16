@@ -15,14 +15,11 @@ module Audit
       end
 
       def recordable_object
-        attribute_hash = {}
-        attrs = record.attributes.keys.filter do |item| ![ :id ].include? item.to_sym end
-
-        record.attributes.each do |key, value|
-          attribute_hash[key] = record.attribute_before_last_save(key) if attrs.include?(key)
+        attrs = record.attributes.except(*record.audit_trail_options[:skip])
+        attrs.each_key do |key|
+          attrs[key] = record.attribute_before_last_save(key)
         end
-
-        attribute_hash
+        attrs
       end
     end
   end
