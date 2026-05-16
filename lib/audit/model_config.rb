@@ -24,7 +24,13 @@ module Audit
 
    def on_update
       @model_class.after_update { |r|
-        r.audit_trail.record_update if r.audit_trail.save_version?
+        if r.audit_trail.save_version?
+          r.audit_trail.record_update(
+            force: false,
+            in_after_callback: true,
+            is_touch: false
+          )
+        end
       }
       append_option_uniquely(:on, :update)
    end

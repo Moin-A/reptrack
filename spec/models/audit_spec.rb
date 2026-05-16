@@ -143,4 +143,12 @@ RSpec.describe Audit::AuditTrail, type: :model do
     expect(version.item_id).to eq(task.id)
     expect(version.event).to eq("update")
   end
+
+  it "stores the previous value of the record in the object column on update" do
+    task = create(:task, name: "original name")
+    task.update!(name: "updated name")
+    version = Audit::Version.last
+    object = version.object["name"]
+    expect(object).to eq("original name")
+  end
 end

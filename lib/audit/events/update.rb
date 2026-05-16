@@ -1,8 +1,9 @@
 module Audit
   module Events
     class Update < Base
-      def initialize(record, in_after_callback = true)
-        super(record, in_after_callback)
+      def initialize(record, force:, in_after_callback:, is_touch:)
+        super(record, force:, in_after_callback:, is_touch:)
+        @force = force
       end
 
       def data
@@ -13,7 +14,7 @@ module Audit
         }
 
         if record_object?
-          obj[:object] = recordable_object(true)
+          obj[:object] = recordable_object
         end
         obj
       end

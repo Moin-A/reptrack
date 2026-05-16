@@ -2,17 +2,18 @@ require "rails_helper"
 
 RSpec.describe Audit::Events::Update do
   let(:record) { build_stubbed(:task) }
+  let(:default_kwargs) { { force: false, in_after_callback: true, is_touch: false } }
 
   describe "#initialize" do
     it "initializes @record and @in_after_callback" do
-      event = described_class.new(record, false)
+      event = described_class.new(record, **default_kwargs.merge(in_after_callback: false))
       expect(event.instance_variable_get(:@record)).to eq(record)
       expect(event.instance_variable_get(:@in_after_callback)).to be false
     end
 
-    it "defaults @in_after_callback to true" do
-      event = described_class.new(record)
-      expect(event.instance_variable_get(:@in_after_callback)).to be true
+    it "sets @force from the keyword argument" do
+      event = described_class.new(record, **default_kwargs.merge(force: true))
+      expect(event.instance_variable_get(:@force)).to be true
     end
   end
 
@@ -20,7 +21,7 @@ RSpec.describe Audit::Events::Update do
     before { Audit::Request.whodunnit = nil }
     after  { Audit::Request.whodunnit = nil }
 
-    subject(:event) { described_class.new(record) }
+    subject(:event) { described_class.new(record, **default_kwargs) }
 
     it "returns :item set to the record" do
       expect(event.data[:item]).to eq(record)
@@ -63,7 +64,8 @@ RSpec.describe Audit::Events::Update do
     context "object column" do
       context "when record has an object column" do
         before do
-          allow(event).to receive(:recordable_object).with(true).and_return('{"name":"old"}')
+          # Stubbing recordable_object for now — remove once the method is defined
+          allow(event).to receive(:recordable_object).and_return({ "name" => "old" })
         end
 
         it "includes :object in data" do
@@ -71,7 +73,7 @@ RSpec.describe Audit::Events::Update do
         end
 
         it "sets :object to the result of recordable_object" do
-          expect(event.data[:object]).to eq('{"name":"old"}')
+          expect(event.data[:object]).to eq({ "name" => "old" })
         end
       end
 

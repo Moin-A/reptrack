@@ -14,10 +14,9 @@ module Audit
           # Logic to track changes for the @record
         end
 
-        def record_update
+        def record_update(force:, in_after_callback:, is_touch:)
             return unless save_version?
-
-            build_version_on_update(in_after_callback: true).tap do |version|
+            build_version_on_update(force:, in_after_callback:, is_touch:).tap do |version|
                 version.save!
                 @record.versions.reset
             rescue StandardError => e
@@ -51,8 +50,8 @@ module Audit
             Audit::Version.new(data)
         end
 
-        def build_version_on_update(in_after_callback:)
-            data = Events::Update.new(@record, in_after_callback).data
+        def build_version_on_update(force:, in_after_callback:, is_touch:)
+            data = Events::Update.new(@record, force:, in_after_callback:, is_touch:).data
             Audit::Version.new(data)
         end
     end
