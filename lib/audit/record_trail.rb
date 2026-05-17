@@ -25,6 +25,14 @@ module Audit
         end
 
         def record_destroy
+            return unless save_version?
+
+            build_version_on_destroy(in_after_callback: @in_after_callback).tap do |version|
+                version.save!
+                @record.versions.reset
+            rescue StandardError => e
+                handle_version_errors e, version, :destroy
+            end
         end
 
         def handle_version_errors(e, version, event)
@@ -52,6 +60,11 @@ module Audit
 
         def build_version_on_update(force:, in_after_callback:, is_touch:)
             data = Events::Update.new(@record, force:, in_after_callback:, is_touch:).data
+            Audit::Version.new(data)
+        end
+
+        def build_version_on_destroy(in_after_callback:)
+            data = Events::Destroy.new(@record, in_after_callback).data
             Audit::Version.new(data)
         end
     end

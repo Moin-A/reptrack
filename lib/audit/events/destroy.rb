@@ -7,16 +7,16 @@ module Audit
       end
 
       def data
-        {
+        data = {
           item: @record,
           event: "destroy",
           whodunnit: Audit::Request.whodunnit,
           object: @record.attributes
         }
         if record_object?
-         data[:object] = recordable_object
+          data[:object] = recordable_object
         end
-       
+
         data
       end
 
