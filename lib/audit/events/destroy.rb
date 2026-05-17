@@ -13,13 +13,14 @@ module Audit
           whodunnit: Audit::Request.whodunnit,
           object: @record.attributes
         }
+        if record_object?
+         data[:object] = recordable_object
+        end
+       
+        data
       end
 
-      if record_object?
-          data[:object] = recordable_object
-      end
-      
-      data
+    
     end
   end
 end
