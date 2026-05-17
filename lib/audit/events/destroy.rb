@@ -14,6 +14,12 @@ module Audit
           object: @record.attributes
         }
       end
+
+      if record_object?
+          data[:object] = recordable_object
+      end
+      
+      data
     end
   end
 end
