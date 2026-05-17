@@ -1,6 +1,6 @@
 module Audit
   module Events
-    class Destroy
+    class Destroy < Base
       def initialize(record, in_after_callback = false)
         @record = record
         @in_after_callback = in_after_callback
