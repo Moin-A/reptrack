@@ -15,6 +15,9 @@ module Audit
         if @record.respond_to?(:updated_at)
           data[:created_at] = @record.updated_at
         end
+        if record_object?
+          data[:object] = recordable_object
+        end
         data
       end
     end
