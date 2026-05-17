@@ -1,6 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe Audit::Version, type: :model do
+  it "reify returns an instance of the item_type class" do
+    version = described_class.new(
+      item_type: "User",
+      object: { "id" => 1, "name" => "Test User" }.to_json
+    )
+    result = version.reify
+    expect(result).to be_an_instance_of(version.item_type.constantize)
+  end
+
   describe ".resolve_date_string" do
     let(:now) { Time.current.change(usec: 0) }
 
