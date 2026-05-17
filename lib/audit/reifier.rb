@@ -10,9 +10,8 @@ module Audit
       private
 
       def init_model(version, attrs)
-       
         if version.item.present?
-         version.item 
+         version.item
         else
           model = version.item_type.constantize
           model.new(attrs)

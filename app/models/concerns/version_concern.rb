@@ -6,7 +6,6 @@ module VersionConcern
     end
 
     class_methods do
-
     end
 
     def reify(options = {})
