@@ -2,7 +2,7 @@ module Audit
   module Reifier
     class << self
       def reify(version, options = {})
-        attrs = JSON.parse(version.object)
+        attrs = version.object
         model = init_model(version, attrs)
         model
       end
