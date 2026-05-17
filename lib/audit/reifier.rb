@@ -2,16 +2,21 @@ module Audit
   module Reifier
     class << self
       def reify(version, options = {})
-        model = init_model(version, options)
         attrs = JSON.parse(version.object)
-        model.new(attrs)
+        model = init_model(version, attrs)
+        model
       end
 
       private
 
-      def init_model(version, options)
-        model = version.item_type.constantize
-        # Initialize the model with the given version and options
+      def init_model(version, attrs)
+       
+        if version.item.present?
+         version.item 
+        else
+          model = version.item_type.constantize
+          model.new(attrs)
+        end
       end
     end
   end

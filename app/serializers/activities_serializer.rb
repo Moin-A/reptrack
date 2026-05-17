@@ -15,6 +15,6 @@ class ActivitiesSerializer
   end
 
   attribute :entity do |task|
-    task.item
+    task.reify
   end
 end
