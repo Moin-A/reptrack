@@ -12,22 +12,25 @@ class Task < ApplicationRecord
 
   private
 
-  def set_due_date
+def set_due_date
+  now = Time.zone.now
+  self.due_date =
     case bucket
     when "today"
-      self.due_date = Time.zone.now
+      now
     when "tomorrow"
-      self.due_date = Time.zone.now + 1.day
+      now.tomorrow.end_of_day
     when "overdue"
-      self.due_date = Time.zone.now - 1.day
-    when "as soon as possible"
-      self.due_date = Time.zone.now + 2.days
-    when "this week"
-      self.due_date = Time.zone.now + 7.days
-    when "next week"
-      self.due_date = Time.zone.now + 14.days
-    when "sometime later"
-      self.due_date = Time.zone.now + 30.days
+      now.yesterday
+    when "as_soon_as_possible"
+      now + 2.days
+    when "this_week"
+      now.end_of_week
+    when "next_week"
+      now.next_week.end_of_week
+    when "sometime_later"
+      binding.pry
+      now + 30.days
     end
-  end
+end
 end

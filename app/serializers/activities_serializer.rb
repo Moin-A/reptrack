@@ -1,6 +1,6 @@
 class ActivitiesSerializer
   include JSONAPI::Serializer
-  attribute :id, :whodunnit, :event, :item_id, :entity, :entity_type
+  attribute :id, :whodunnit, :event, :item_id, :entity, :entity_type, :created_at
 
   def self.normalize(records)
     new(records).serializable_hash[:data].map { |r| r[:attributes] }

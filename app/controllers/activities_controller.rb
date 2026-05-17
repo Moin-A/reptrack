@@ -1,7 +1,7 @@
 class ActivitiesController < ApplicationController
   def index
     pagy, versions = pagy(filtered_users, limit: 10)
-    result = { groups: ActivitiesSerializer.normalize(versions), meta: pagy  }
+    result = { groups: ActivitiesSerializer.normalize(versions), pagination: pagy  }
     render json: result
   end
 

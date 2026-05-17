@@ -19,8 +19,6 @@ module Audit
 
         data
       end
-
-    
     end
   end
 end
