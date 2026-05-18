@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_16_032235) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_17_180011) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -75,6 +75,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_16_032235) do
     t.integer "assignee_id"
     t.integer "bucket", default: 0
     t.bigint "user_id"
+    t.integer "asset_id"
+    t.string "asset_type"
+    t.index ["asset_id", "asset_type"], name: "index_tasks_on_asset_id_and_asset_type"
     t.index ["user_id"], name: "index_tasks_on_user_id"
   end
 

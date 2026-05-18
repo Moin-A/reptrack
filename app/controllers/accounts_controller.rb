@@ -29,8 +29,18 @@
 
   private
 
-  def accounts_params
-    params.fetch(:account, {}).permit(:name, :email, :phone, :rating, :access, :assigned_to)
+  def accounts_details_params
+    params.fetch(:account_details, {}).permit(:name, :category, :assigned_to, :rating, :tags, :phone, :tollfree, :fax, :email, :website)
+  end
+
+  # "street1"=>"Bhoomkar chowk", "street2"=>"", "city"=>"Pune", "state"=>"Colorado", "zip"=>"41105", "country"=>""}, "billing_address"=>{"street1"=>"Bhoomkar chowk", "street2"=>"", "city"=>"Pune", "state"=>"Colorado", "zip"=>"41105", "country"=>""}, "controller"=>"accounts", "action"=>"create", "account"=>{}} permitted: false>
+
+  def billing_address_params
+    params.fetch(:billing_address, {}).permit(:street1, :street2, :city, :state, :zip, :country)
+  end
+
+  def shipping_address_params
+    params.fetch(:shipping_address, {}).permit(:street1, :street2, :city, :state, :zip, :country)
   end
 
   def accounts
