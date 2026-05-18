@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_17_180011) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_18_120957) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,6 +24,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_17_180011) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "category"
+    t.string "website"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -52,6 +53,24 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_17_180011) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "addresses", force: :cascade do |t|
+    t.string "street1"
+    t.string "street2"
+    t.string "city"
+    t.string "state"
+    t.string "zipcode"
+    t.string "country"
+    t.string "address_type"
+    t.string "website"
+    t.integer "addressable_id"
+    t.string "addressable_type"
+    t.bigint "account_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_addresses_on_account_id"
+    t.index ["addressable_id", "addressable_type"], name: "index_addresses_on_addressable_id_and_addressable_type"
   end
 
   create_table "audit_versions", force: :cascade do |t|
@@ -100,5 +119,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_17_180011) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "addresses", "accounts"
   add_foreign_key "tasks", "users"
 end

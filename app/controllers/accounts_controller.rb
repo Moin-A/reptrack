@@ -4,7 +4,7 @@
   end
 
   def create
-    account = Account.new(accounts_params)
+    account = Account.new(account_params)
     if account.save
       render json: AccountSerializer.normalize(account), status: :created
     else
@@ -29,18 +29,11 @@
 
   private
 
-  def accounts_details_params
-    params.fetch(:account_details, {}).permit(:name, :category, :assigned_to, :rating, :tags, :phone, :tollfree, :fax, :email, :website)
-  end
-
-  # "street1"=>"Bhoomkar chowk", "street2"=>"", "city"=>"Pune", "state"=>"Colorado", "zip"=>"41105", "country"=>""}, "billing_address"=>{"street1"=>"Bhoomkar chowk", "street2"=>"", "city"=>"Pune", "state"=>"Colorado", "zip"=>"41105", "country"=>""}, "controller"=>"accounts", "action"=>"create", "account"=>{}} permitted: false>
-
-  def billing_address_params
-    params.fetch(:billing_address, {}).permit(:street1, :street2, :city, :state, :zip, :country)
-  end
-
-  def shipping_address_params
-    params.fetch(:shipping_address, {}).permit(:street1, :street2, :city, :state, :zip, :country)
+  def account_params
+    params.fetch(:account, {}).permit(:name, :category, :assigned_to, :rating, :tags, :phone, :tollfree, :fax, :email, :website,
+      shipping_address_attributes: [ :street1, :street2, :city, :state, :zipcode, :country ],
+      billing_address_attributes: [ :street1, :street2, :city, :state, :zipcode, :country ]
+    )
   end
 
   def accounts
