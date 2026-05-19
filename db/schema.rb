@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_18_120957) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_19_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "access_policies", force: :cascade do |t|
+    t.string "resource_type", null: false
+    t.bigint "resource_id", null: false
+    t.string "scope", default: "owner", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["resource_type", "resource_id"], name: "index_access_policies_on_resource_type_and_resource_id", unique: true
+  end
 
   create_table "accounts", force: :cascade do |t|
     t.string "name"
@@ -84,6 +93,22 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_18_120957) do
     t.index ["whodunnit"], name: "audit_version_whodunnit_index"
   end
 
+  create_table "role_users", force: :cascade do |t|
+    t.bigint "role_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["role_id"], name: "index_role_users_on_role_id"
+    t.index ["user_id"], name: "index_role_users_on_user_id"
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.string "name"
     t.string "description"
@@ -120,5 +145,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_18_120957) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "accounts"
+  add_foreign_key "role_users", "roles"
+  add_foreign_key "role_users", "users"
   add_foreign_key "tasks", "users"
 end
