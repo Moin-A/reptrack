@@ -19,6 +19,12 @@ module Audit
 
         data
       end
+
+      private
+
+      def recordable_object
+        @record.attributes.except(*@record.audit_trail_options[:skip])
+      end
     end
   end
 end
