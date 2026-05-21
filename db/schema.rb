@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_20_044440) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_21_044427) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
     t.string "name"
-    t.integer "assigned_to"
+    t.integer "assignee_id"
     t.integer "rating"
     t.string "email"
     t.string "phone"
@@ -25,6 +25,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_20_044440) do
     t.datetime "updated_at", null: false
     t.string "category"
     t.string "website"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_accounts_on_user_id"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|

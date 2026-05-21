@@ -65,7 +65,7 @@ RSpec.describe Ability, type: :model do
   describe 'Entity permissions' do
     context 'with Account' do
       it 'can manage a public account' do
-        account = build(:account, access: 'Public')
+        account = build(:account, access: 'Public', assignee_id: nil, user_id: nil)
         expect(ability).to be_able_to(:manage, account)
       end
 
@@ -75,13 +75,13 @@ RSpec.describe Ability, type: :model do
       end
 
       it 'can manage an account assigned to them' do
-        account = build(:account, assigned_to: user.id)
+        account = build(:account, assignee_id: user.id)
         expect(ability).to be_able_to(:manage, account)
       end
 
       it 'cannot manage an account assigned to another user' do
         other_user = create(:user)
-        account = build(:account, assigned_to: other_user.id)
+        account = build(:account, assignee_id: other_user.id)
         expect(ability).not_to be_able_to(:manage, account)
       end
     end

@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :account do
     name { "MyString" }
-    assigned_to { 1 }
+    assignee_id { 1 }
     rating { 1 }
     email { "MyString" }
     phone { "MyString" }

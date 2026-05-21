@@ -5,4 +5,7 @@ class Account < ApplicationRecord
    accepts_nested_attributes_for :shipping_address, allow_destroy: true
    accepts_nested_attributes_for :billing_address, allow_destroy: true
    validates :email, format: { with: /\A[^\s@]+@[^\s@]+\z/, message: "the email format is not valid" }
+   belongs_to :user, optional: true
+   belongs_to :assignee, class_name: "User", foreign_key: "assignee_id", optional: true
+   belongs_to :user, class_name: "User", foreign_key: "user_id", optional: true
 end

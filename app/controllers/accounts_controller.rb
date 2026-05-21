@@ -30,7 +30,7 @@
   private
 
   def account_params
-    params.fetch(:account, {}).permit(:name, :category, :assigned_to, :rating, :tags, :phone, :tollfree, :fax, :email, :website,
+    params.fetch(:account, {}).permit(:name, :category, :assignee_id, :rating, :tags, :phone, :tollfree, :fax, :email, :website,
       shipping_address_attributes: [ :street1, :street2, :city, :state, :zipcode, :country ],
       billing_address_attributes: [ :street1, :street2, :city, :state, :zipcode, :country ]
     )
