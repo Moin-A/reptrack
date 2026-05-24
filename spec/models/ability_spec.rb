@@ -62,6 +62,31 @@ RSpec.describe Ability, type: :model do
     end
   end
 
+  describe 'Lead permissions' do
+    let(:lead) { create(:lead, access: 'Private') }
+    let(:qa_group) { create(:group, name: 'Test Group') }
+    let(:managers_group) { create(:group, name: 'Managers') }
+
+    before do
+      user.groups << qa_group
+      user.groups << managers_group
+    end
+
+    context 'when a Permission record exists for the user and this lead' do
+      before { create(:permission, user: user, asset_type: 'Lead', asset_id: lead.id) }
+
+      it 'can manage the lead' do
+        expect(ability).to be_able_to(:manage, lead)
+      end
+    end
+
+    context 'when no Permission record exists for the user and this lead' do
+      it 'cannot manage the lead' do
+        expect(ability).not_to be_able_to(:manage, lead)
+      end
+    end
+  end
+
   describe 'Entity permissions' do
     context 'with Account' do
       it 'can manage a public account' do

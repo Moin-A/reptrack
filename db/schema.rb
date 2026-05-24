@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_21_044427) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_24_055742) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -100,7 +100,35 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_21_044427) do
     t.index ["user_id"], name: "index_groups_users_on_user_id"
   end
 
+  create_table "leads", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "assignee_id"
+    t.string "first_name", limit: 64, default: "", null: false
+    t.string "last_name", limit: 64, default: "", null: false
+    t.string "access", limit: 8, default: "Public"
+    t.string "title", limit: 64
+    t.string "company", limit: 64
+    t.string "source", limit: 32
+    t.string "status", limit: 32
+    t.string "referred_by", limit: 64
+    t.string "email", limit: 254
+    t.string "alt_email", limit: 254
+    t.string "phone", limit: 32
+    t.string "mobile", limit: 32
+    t.string "blog", limit: 128
+    t.string "linkedin", limit: 128
+    t.string "facebook", limit: 128
+    t.string "twitter", limit: 128
+    t.integer "rating", default: 0, null: false
+    t.boolean "do_not_call", default: false, null: false
+    t.string "background_info"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "permissions", force: :cascade do |t|
+    t.bigint "user_id", null: false
     t.bigint "group_id", null: false
     t.string "action", default: "all", null: false
     t.datetime "created_at", null: false
@@ -109,6 +137,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_21_044427) do
     t.bigint "asset_id", null: false
     t.index ["asset_type", "asset_id"], name: "index_permissions_on_asset"
     t.index ["group_id"], name: "index_permissions_on_group_id"
+    t.index ["user_id"], name: "index_permissions_on_user_id"
   end
 
   create_table "role_users", force: :cascade do |t|
@@ -163,9 +192,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_21_044427) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "accounts"
-  add_foreign_key "groups_users", "groups"
   add_foreign_key "groups_users", "users"
   add_foreign_key "permissions", "groups"
+  add_foreign_key "permissions", "users"
   add_foreign_key "role_users", "roles"
   add_foreign_key "role_users", "users"
   add_foreign_key "tasks", "users"

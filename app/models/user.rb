@@ -6,6 +6,8 @@ class User < ApplicationRecord
 
   has_many :role_users, dependent: :destroy
   has_many :roles, through: :role_users
+  has_many :permissions, dependent: :destroy
+  has_and_belongs_to_many :groups
 
   validates :name, presence: true
 

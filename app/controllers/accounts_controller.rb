@@ -14,8 +14,8 @@
 
   def update
     account = Account.find(params[:id])
-    if account.update(accounts_params)
-      render json: AccountSerializer.normalize([ account ]).first
+    if account.update(account_params)
+      render json: AccountSerializer.normalize(account).first
     else
       render json: { errors: account.errors.full_messages }, status: :unprocessable_entity
     end
@@ -30,9 +30,9 @@
   private
 
   def account_params
-    params.fetch(:account, {}).permit(:name, :category, :assignee_id, :rating, :tags, :phone, :tollfree, :fax, :email, :website,
-      shipping_address_attributes: [ :street1, :street2, :city, :state, :zipcode, :country ],
-      billing_address_attributes: [ :street1, :street2, :city, :state, :zipcode, :country ]
+    params.fetch(:account, {}).permit(:id, :name, :category, :assignee_id, :rating, :tags, :phone, :tollfree, :fax, :email, :website,
+      shipping_address_attributes: [:id, :street1, :street2, :city, :state, :zipcode, :country],
+      billing_address_attributes: [:id, :street1, :street2, :city, :state, :zipcode, :country]
     )
   end
 

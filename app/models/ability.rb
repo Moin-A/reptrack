@@ -5,7 +5,7 @@ class Ability
   def initialize(user)
 
     if user.present?
-      entities = [Account, Address];
+      entities = [Account, Address, Lead]
 
       can :manage, Task, user_id: user.id
       can :manage, Task, assignee_id: user.id
@@ -18,7 +18,14 @@ class Ability
       if user.admin?
         can :manage, entities
       else
-        can :read, entities
+        permissions = Permission.arel_table
+
+        scope = permissions[:user_id].eq(user.id).or(permissions[:group_id].in(user.group_ids))
+
+        Permission.where(scope).each do |p|
+          next if p.asset_type.nil? || p.asset_id.nil?
+          can :manage, p.asset_type.constantize, id: p.asset_id
+        end
       end
     end
   end
