@@ -15,7 +15,7 @@
   def update
     account = Account.find(params[:id])
     if account.update(account_params)
-      render json: AccountSerializer.normalize(account).first
+      render json: AccountSerializer.normalize(account)
     else
       render json: { errors: account.errors.full_messages }, status: :unprocessable_entity
     end
