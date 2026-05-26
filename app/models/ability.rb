@@ -5,7 +5,7 @@ class Ability
   def initialize(user)
 
     if user.present?
-      entities = [Account, Address, Lead]
+      entities = [Account, Address, Lead, Group]
 
       can :manage, Task, user_id: user.id
       can :manage, Task, assignee_id: user.id

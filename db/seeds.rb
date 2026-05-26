@@ -12,4 +12,3 @@ Role.find_or_create_by!(name: "admin")
 
 Group.find_or_create_by!(name: "sales_ops")
 
-Permission.find_or_create_by!(group: Group.find_by!(name: "sales_ops"), action: "view", asset: Account)
