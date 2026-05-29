@@ -15,7 +15,7 @@ RSpec.describe Ability, type: :model do
     it 'can manage their own record' do
       expect(ability).to be_able_to(:manage, user)
     end
-    
+
     it 'cannot manage another user' do
       other_user = create(:user)
       expect(ability).not_to be_able_to(:manage, other_user)

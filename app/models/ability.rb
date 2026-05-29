@@ -3,18 +3,17 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-
     if user.present?
-      entities = [Account, Address, Lead, Group]
+      entities = [ Account, Address, Lead, Group ]
 
       can :manage, Task, user_id: user.id
       can :manage, Task, assignee_id: user.id
 
       can :manage, User, id: user.id
-      can :manage, entities, access: 'Public'
+      can :manage, entities, access: "Public"
       can :manage, entities, assignee_id: user.id
       can :manage, entities, user_id: user.id
-      
+
       if user.admin?
         can :manage, entities
       else

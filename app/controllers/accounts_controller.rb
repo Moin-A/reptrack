@@ -31,8 +31,8 @@ class AccountsController < ApplicationController
 
   def account_params
     params.fetch(:account, {}).permit(:id, :name, :category, :assignee_id, :rating, :tags, :phone, :tollfree, :fax, :email, :website,
-      shipping_address_attributes: [:id, :street1, :street2, :city, :state, :zipcode, :country],
-      billing_address_attributes: [:id, :street1, :street2, :city, :state, :zipcode, :country]
+      shipping_address_attributes: [ :id, :street1, :street2, :city, :state, :zipcode, :country ],
+      billing_address_attributes: [ :id, :street1, :street2, :city, :state, :zipcode, :country ]
     )
   end
 
@@ -44,4 +44,9 @@ class AccountsController < ApplicationController
     params.permit(permitted_groups: [])
   end
 
+  def set_group
+    if permitted_groups_params[:permitted_groups].present?
+      @group = Group.find(permitted_groups_params[:permitted_groups].first)
+    end
+  end
 end

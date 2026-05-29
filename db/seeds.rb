@@ -11,4 +11,3 @@
 Role.find_or_create_by!(name: "admin")
 
 Group.find_or_create_by!(name: "sales_ops")
-
