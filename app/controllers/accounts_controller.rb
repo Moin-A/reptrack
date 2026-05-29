@@ -6,11 +6,12 @@ class AccountsController < ApplicationController
   end
 
   def create
-    account = Account.new(account_params)
-    if account.save
-      render json: AccountSerializer.normalize(account), status: :created
+    @account.update(account_params)
+    if @account.save
+      @account.user_ids = permitted_users_params[:permitted_users]
+      render json: AccountSerializer.normalize(@account), status: :created
     else
-      render json: { errors: account.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @account.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -30,7 +31,7 @@ class AccountsController < ApplicationController
   private
 
   def account_params
-    params.fetch(:account, {}).permit(:id, :name, :category, :assignee_id, :rating, :tags, :phone, :tollfree, :fax, :email, :website,
+    params.fetch(:account, {}).permit(:id, :name, :category, :assignee_id, :rating, :tags, :phone, :access, :tollfree, :fax, :email, :website,
       shipping_address_attributes: [ :id, :street1, :street2, :city, :state, :zipcode, :country ],
       billing_address_attributes: [ :id, :street1, :street2, :city, :state, :zipcode, :country ]
     )
