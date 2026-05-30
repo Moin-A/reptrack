@@ -6,7 +6,7 @@ class AccountsController < ApplicationController
   end
 
   def create
-    @account.update(account_params)
+    @account.update(create_account_params)
     if @account.save
       @account.user_ids = permitted_users_params[:permitted_users]
       render json: AccountSerializer.normalize(@account), status: :created
@@ -35,6 +35,10 @@ class AccountsController < ApplicationController
       shipping_address_attributes: [ :id, :street1, :street2, :city, :state, :zipcode, :country ],
       billing_address_attributes: [ :id, :street1, :street2, :city, :state, :zipcode, :country ]
     )
+  end
+
+  def create_account_params
+    account_params.except(:id)
   end
 
   def permitted_users_params
