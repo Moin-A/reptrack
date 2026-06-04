@@ -1,14 +1,16 @@
 class LeadsController < ApplicationController
+  load_and_authorize_resource
+
   def index
     render json: { leads: LeadSerializer.normalize_records(Lead.all) }
   end
 
   def create
-    lead = Lead.new(lead_params)
-    if lead.save
-      render json: LeadSerializer.normalize(lead), status: :created
+    @lead.assign_attributes(lead_params.except(:id))
+    if @lead.save
+      render json: LeadSerializer.normalize(@lead), status: :created
     else
-      render json: { errors: lead.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @lead.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -30,11 +32,11 @@ class LeadsController < ApplicationController
   private
 
   def lead_params
-    params.fetch(:lead, {}).permit(
+    params.fetch(:lead, {}).permit(:id,
       :first_name, :last_name, :email, :alt_email, :phone, :mobile,
       :title, :company, :source, :status, :referred_by,
       :blog, :linkedin, :facebook, :twitter,
-      :rating, :do_not_call, :background_info, :access, :assigned_to
+      :rating, :do_not_call, :background_info, :access, :assignee_id
     )
   end
 end

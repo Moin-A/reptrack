@@ -1,6 +1,6 @@
-class CreateLeads < ActiveRecord::Migration[7.1]
+class CreateLeadsTable < ActiveRecord::Migration[7.2]
   def change
-    create_table :leads do |t|
+    create_table :leads_tables do |t|
       t.integer  :user_id
       t.integer  :assignee_id
       t.string   :first_name,      limit: 64,  default: "", null: false

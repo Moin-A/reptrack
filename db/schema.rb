@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_28_000001) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_03_171922) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -102,6 +102,33 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_28_000001) do
   end
 
   create_table "leads", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "assignee_id"
+    t.string "first_name", limit: 64, default: "", null: false
+    t.string "last_name", limit: 64, default: "", null: false
+    t.string "access", limit: 8, default: "Public"
+    t.string "title", limit: 64
+    t.string "company", limit: 64
+    t.string "source", limit: 32
+    t.string "status", limit: 32
+    t.string "referred_by", limit: 64
+    t.string "email", limit: 254
+    t.string "alt_email", limit: 254
+    t.string "phone", limit: 32
+    t.string "mobile", limit: 32
+    t.string "blog", limit: 128
+    t.string "linkedin", limit: 128
+    t.string "facebook", limit: 128
+    t.string "twitter", limit: 128
+    t.integer "rating", default: 0, null: false
+    t.boolean "do_not_call", default: false, null: false
+    t.string "background_info"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "leads_tables", force: :cascade do |t|
     t.integer "user_id"
     t.integer "assignee_id"
     t.string "first_name", limit: 64, default: "", null: false
