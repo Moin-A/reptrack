@@ -6,9 +6,8 @@ class LeadsController < ApplicationController
   end
 
   def create
-    @lead.assign_attributes(lead_params.except(:id))
     if @lead.save
-      render json: LeadSerializer.normalize(@lead), status: :created
+      render json: { lead: LeadSerializer.normalize(@lead) }, status: :created
     else
       render json: { errors: @lead.errors.full_messages }, status: :unprocessable_entity
     end
@@ -36,7 +35,8 @@ class LeadsController < ApplicationController
       :first_name, :last_name, :email, :alt_email, :phone, :mobile,
       :title, :company, :source, :status, :referred_by,
       :blog, :linkedin, :facebook, :twitter,
-      :rating, :do_not_call, :background_info, :access, :assignee_id
+      :rating, :do_not_call, :background_info, :access, :assignee_id,
+      business_address_attributes: [ :street1, :street2, :city, :state, :zipcode, :country ],
     )
   end
 end

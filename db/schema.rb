@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_06_03_171922) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_06_071006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -84,6 +84,38 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_03_171922) do
     t.datetime "created_at"
     t.index ["item_type", "item_id"], name: "index_audit_versions_on_item_type_and_item_id"
     t.index ["whodunnit"], name: "audit_version_whodunnit_index"
+  end
+
+  create_table "contacts", force: :cascade do |t|
+    t.integer "assigned_to"
+    t.integer "reports_to"
+    t.string "first_name", limit: 64, default: "", null: false
+    t.string "last_name", limit: 64, default: "", null: false
+    t.string "title", limit: 64
+    t.string "department", limit: 64
+    t.string "source", limit: 32
+    t.string "access", limit: 8, default: "Public"
+    t.string "email", limit: 254
+    t.string "alt_email", limit: 254
+    t.string "phone", limit: 32
+    t.string "mobile", limit: 32
+    t.string "fax", limit: 32
+    t.string "blog", limit: 128
+    t.string "linkedin", limit: 128
+    t.string "facebook", limit: 128
+    t.string "twitter", limit: 128
+    t.date "born_on"
+    t.boolean "do_not_call", default: false, null: false
+    t.string "background_info"
+    t.datetime "deleted_at"
+    t.bigint "lead_id"
+    t.bigint "user_id"
+    t.bigint "assignee_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignee_id"], name: "index_contacts_on_assignee_id"
+    t.index ["lead_id"], name: "index_contacts_on_lead_id"
+    t.index ["user_id"], name: "index_contacts_on_user_id"
   end
 
   create_table "groups", force: :cascade do |t|
@@ -220,6 +252,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_03_171922) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "accounts"
+  add_foreign_key "contacts", "leads"
+  add_foreign_key "contacts", "users"
+  add_foreign_key "contacts", "users", column: "assignee_id"
   add_foreign_key "groups_users", "users"
   add_foreign_key "permissions", "groups"
   add_foreign_key "permissions", "users"

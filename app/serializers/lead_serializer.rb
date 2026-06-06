@@ -12,6 +12,10 @@ class LeadSerializer
     object.assignee && { id: object.assignee.id, name: object.assignee.name, email: object.assignee.email }
   end
 
+  attribute :business_address do |object|
+    object.business_address&.as_json
+  end
+
   def self.normalize_records(records)
     records.map { |r| normalize(r) }
   end
@@ -19,5 +23,4 @@ class LeadSerializer
   attribute :whodunnit do |object|
     object.user && { id: object.user.id, name: object.user.name, email: object.user.email }
   end
-
 end
