@@ -18,7 +18,7 @@ module Audit
     def self.visible_to(user)
       all.to_a.delete_if do |version|
         item = version.item || version.reify
-        if item.user_id == user.id || item.assignee_id == user.id || user.admin? || version.whodunnit == user.id
+        if item.user_id == user.id || item.assignee_id == user.id || user.admin? || version.whodunnit.to_i == user.id
           next false
         else
           next true
