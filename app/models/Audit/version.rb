@@ -14,5 +14,16 @@ module Audit
       when "past_30_days" then [ 30.days.ago, Time.current ]
       end
     end
+
+    def self.visible_to(user)
+      all.to_a.delete_if do |version|
+        item = version.item || version.reify
+        if item.user_id == user.id || item.assignee_id == user.id || user.admin?
+          next false
+        else
+          next true
+        end
+      end   
+    end
   end
 end

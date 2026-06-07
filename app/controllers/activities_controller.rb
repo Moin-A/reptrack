@@ -8,7 +8,7 @@ class ActivitiesController < ApplicationController
   private
 
   def filtered_users
-    scope = Audit::Version.includes(:user, :item).all
+    scope = Audit::Version.includes(:user, :item).visible_to(current_user)
     scope = scope.performed_by(activities_params[:by]) if activities_params[:by].present?
     scope = scope.performed_on_or_before(*resolved_date_time) if resolved_date_time.present?
     scope = scope.order(created_at: :desc)
