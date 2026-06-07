@@ -4,5 +4,6 @@ FactoryBot.define do
     sequence(:item_id)
     event { "create" }
     whodunnit { nil }
+    object { { "id" => item_id, "name" => "Sample Task", "user_id" => nil, "assignee_id" => nil } }
   end
 end

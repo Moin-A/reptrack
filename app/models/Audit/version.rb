@@ -16,10 +16,13 @@ module Audit
     end
 
     def self.visible_to(user)
-      all.select do |version|
+      return all if user.admin?
+
+      visible_ids = all.select do |version|
         item = version.item || version.reify
-        item.user_id == user.id || item.assignee_id == user.id || user.admin? || version.whodunnit.to_i == user.id
-      end
+        item.user_id == user.id || item.assignee_id == user.id || version.whodunnit.to_i == user.id
+      end.map(&:id)
+      where(id: visible_ids)
     end
   end
 end
