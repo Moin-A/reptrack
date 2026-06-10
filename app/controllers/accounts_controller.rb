@@ -1,8 +1,18 @@
 class AccountsController < ApplicationController
+  include ActionController::MimeResponds
+
   load_and_authorize_resource
 
   def index
-    render json: { accounts: AccountSerializer.normalize_records(@accounts) }
+    respond_to do |format|
+      format.json { render json: { accounts: AccountSerializer.normalize_records(@accounts) } }
+      format.xls do
+        send_data AccountXlsExporter.new(@accounts).to_xls,
+          filename: "accounts_#{Date.current}.xls",
+          type: :xls,
+          disposition: "attachment"
+      end
+    end
   end
 
   def create
