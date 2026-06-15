@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workbook xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40" xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office">
+  <Worksheet ss:Name="Accounts">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Id</Data></Cell>
+        <Cell><Data ss:Type="String">Name</Data></Cell>
+        <Cell><Data ss:Type="String">Rating</Data></Cell>
+        <Cell><Data ss:Type="String">Email</Data></Cell>
+        <Cell><Data ss:Type="String">Phone</Data></Cell>
+        <Cell><Data ss:Type="String">Access</Data></Cell>
+        <Cell><Data ss:Type="String">Category</Data></Cell>
+        <Cell><Data ss:Type="String">Website</Data></Cell>
+        <Cell><Data ss:Type="String">User</Data></Cell>
+        <Cell><Data ss:Type="String">Assigned To</Data></Cell>
+        <Cell><Data ss:Type="String">Date Created</Data></Cell>
+        <Cell><Data ss:Type="String">Date Updated</Data></Cell>
+        <Cell><Data ss:Type="String">Billing Street1</Data></Cell>
+        <Cell><Data ss:Type="String">Billing Street2</Data></Cell>
+        <Cell><Data ss:Type="String">Billing City</Data></Cell>
+        <Cell><Data ss:Type="String">Billing State</Data></Cell>
+        <Cell><Data ss:Type="String">Billing Zipcode</Data></Cell>
+        <Cell><Data ss:Type="String">Billing Country</Data></Cell>
+        <Cell><Data ss:Type="String">Shipping Street1</Data></Cell>
+        <Cell><Data ss:Type="String">Shipping Street2</Data></Cell>
+        <Cell><Data ss:Type="String">Shipping City</Data></Cell>
+        <Cell><Data ss:Type="String">Shipping State</Data></Cell>
+        <Cell><Data ss:Type="String">Shipping Zipcode</Data></Cell>
+        <Cell><Data ss:Type="String">Shipping Country</Data></Cell>
+      </Row>
+      <Row>
+        <Cell><Data ss:Type="Number">1</Data></Cell>
+        <Cell><Data ss:Type="String">Acme Corp</Data></Cell>
+        <Cell><Data ss:Type="Number">3</Data></Cell>
+        <Cell><Data ss:Type="String">info@acme.com</Data></Cell>
+        <Cell><Data ss:Type="String">555-0100</Data></Cell>
+        <Cell><Data ss:Type="String">Public</Data></Cell>
+        <Cell><Data ss:Type="String">Vendor</Data></Cell>
+        <Cell><Data ss:Type="String">https://acme.example.com</Data></Cell>
+        <Cell><Data ss:Type="String">admin</Data></Cell>
+        <Cell><Data ss:Type="String">admin</Data></Cell>
+        <Cell><Data ss:Type="String">2026-06-01</Data></Cell>
+        <Cell><Data ss:Type="String">2026-06-01</Data></Cell>
+        <Cell><Data ss:Type="String">1 Main St</Data></Cell>
+        <Cell><Data ss:Type="String">Suite 100</Data></Cell>
+        <Cell><Data ss:Type="String">Springfield</Data></Cell>
+        <Cell><Data ss:Type="String">IL</Data></Cell>
+        <Cell><Data ss:Type="String">62701</Data></Cell>
+        <Cell><Data ss:Type="String">USA</Data></Cell>
+        <Cell><Data ss:Type="String">1 Main St</Data></Cell>
+        <Cell><Data ss:Type="String">Suite 100</Data></Cell>
+        <Cell><Data ss:Type="String">Springfield</Data></Cell>
+        <Cell><Data ss:Type="String">IL</Data></Cell>
+        <Cell><Data ss:Type="String">62701</Data></Cell>
+        <Cell><Data ss:Type="String">USA</Data></Cell>
+      </Row>
+      <Row>
+        <Cell><Data ss:Type="Number">2</Data></Cell>
+        <Cell><Data ss:Type="String">Globex</Data></Cell>
+        <Cell><Data ss:Type="Number">5</Data></Cell>
+        <Cell><Data ss:Type="String">hi@globex.com</Data></Cell>
+        <Cell><Data ss:Type="String">555-0200</Data></Cell>
+        <Cell><Data ss:Type="String">Private</Data></Cell>
+        <Cell><Data ss:Type="String">Customer</Data></Cell>
+        <Cell><Data ss:Type="String">https://globex.example.com</Data></Cell>
+        <Cell><Data ss:Type="String">admin</Data></Cell>
+        <Cell><Data ss:Type="String">admin</Data></Cell>
+        <Cell><Data ss:Type="String">2026-06-02</Data></Cell>
+        <Cell><Data ss:Type="String">2026-06-02</Data></Cell>
+        <Cell><Data ss:Type="String">42 Industrial Way</Data></Cell>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String">Ogdenville</Data></Cell>
+        <Cell><Data ss:Type="String">NY</Data></Cell>
+        <Cell><Data ss:Type="String">10001</Data></Cell>
+        <Cell><Data ss:Type="String">USA</Data></Cell>
+        <Cell><Data ss:Type="String">42 Industrial Way</Data></Cell>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String">Ogdenville</Data></Cell>
+        <Cell><Data ss:Type="String">NY</Data></Cell>
+        <Cell><Data ss:Type="String">10001</Data></Cell>
+        <Cell><Data ss:Type="String">USA</Data></Cell>
+      </Row>
+    </Table>
+  </Worksheet>
+</Workbook>

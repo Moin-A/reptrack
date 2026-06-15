@@ -14,4 +14,22 @@ class Account < ApplicationRecord
    belongs_to :user, class_name: "User", foreign_key: "user_id", optional: true
 
    with_permission
+
+   # Own columns we don't export as-is: foreign keys (shown as names instead)
+   # and timestamps (relabeled below).
+   EXCLUDED_COLUMNS = %w[user_id assignee_id created_at updated_at].freeze
+
+   # Cross-model / relabeled columns that can't be derived from the schema:
+   # association names and the nested billing/shipping address fields.
+   CUSTOM_COLUMNS = [
+     "User", "Assigned To", "Date Created", "Date Updated",
+     "Billing Street1", "Billing Street2", "Billing City", "Billing State", "Billing Zipcode", "Billing Country",
+     "Shipping Street1", "Shipping Street2", "Shipping City", "Shipping State", "Shipping Zipcode", "Shipping Country"
+   ].freeze
+
+   # XLS column labels: the model's own scalar columns (titleized) followed by
+   # the custom cross-model columns.
+   def self.model_headers
+     (column_names - EXCLUDED_COLUMNS).map(&:titleize) + CUSTOM_COLUMNS
+   end
 end

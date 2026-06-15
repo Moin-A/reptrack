@@ -14,10 +14,19 @@ RSpec.describe AccountXlsImporter do
       end
     end
 
-    context "when the file is not a valid XLS workbook" do
-      let(:upload) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/invalid.xls"), "text/plain") }
+    context "when the file does not have the expected headers" do
+      let(:upload) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/invalid.xls"), "application/vnd.ms-excel") }
 
       it "returns false and reports the error" do
+        expect(importer.valid?).to be false
+        expect(importer.errors).to include("Invalid file headers")
+      end
+    end
+
+    context "when the file fails both content type and header validation" do
+      let(:upload) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/invalid.xls"), "text/plain") }
+
+      it "returns false and reports both errors" do
         expect(importer.valid?).to be false
         expect(importer.errors).to include("File is not a valid XLS file", "Invalid file headers")
       end

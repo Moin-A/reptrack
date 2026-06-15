@@ -15,6 +15,10 @@ class AccountsController < ApplicationController
     end
   end
 
+  def import
+    return render json: { error: "No file uploaded" }, status: :bad_request unless params[:file].present?
+  end
+
   def create
     @account.update(create_account_params)
     if @account.save
