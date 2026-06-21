@@ -17,6 +17,12 @@ class AccountsController < ApplicationController
 
   def import
     return render json: { error: "No file uploaded" }, status: :bad_request unless params[:file].present?
+    export_service = AccountXlsImporter.new(params[:file])
+    if export_service.valid?
+      render json: { message: "Accounts imported successfully" }, status: :ok
+    else
+      render json: { message: export_service.errors }, status: :unprocessable_entity
+    end
   end
 
   def create
