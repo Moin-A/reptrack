@@ -31,6 +31,9 @@ gem "devise-jwt"
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
 gem "jsonapi-serializer"
+# Real .xlsx export (caxlsx) and import parsing (roo)
+gem "caxlsx"
+gem "roo"
 
 group :development do
   gem "bullet"

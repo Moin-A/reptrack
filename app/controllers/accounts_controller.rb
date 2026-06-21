@@ -6,10 +6,10 @@ class AccountsController < ApplicationController
   def index
     respond_to do |format|
       format.json { render json: { accounts: AccountSerializer.normalize_records(@accounts) } }
-      format.xls do
-        send_data AccountXlsExporter.new(@accounts).to_xls,
-          filename: "accounts_#{Date.current}.xls",
-          type: :xls,
+      format.xlsx do
+        send_data AccountXlsExporter.new(@accounts).to_xlsx,
+          filename: "accounts_#{Date.current}.xlsx",
+          type: :xlsx,
           disposition: "attachment"
       end
     end
@@ -17,12 +17,18 @@ class AccountsController < ApplicationController
 
   def import
     return render json: { error: "No file uploaded" }, status: :bad_request unless params[:file].present?
-    export_service = AccountXlsImporter.new(params[:file])
-    if export_service.valid?
-      render json: { message: "Accounts imported successfully" }, status: :ok
+
+    importer = AccountXlsImporter.new(params[:file], current_ability)
+    return render json: { message: importer.errors }, status: :unprocessable_entity unless importer.valid?
+
+    importer.execute
+    if importer.errors.any?
+      render json: { message: importer.errors }, status: :unprocessable_entity
     else
-      render json: { message: export_service.errors }, status: :unprocessable_entity
+      render json: { message: "Accounts imported successfully" }, status: :ok
     end
+  rescue StandardError => e
+    render json: { message: [ e.message ] }, status: :unprocessable_entity
   end
 
   def create

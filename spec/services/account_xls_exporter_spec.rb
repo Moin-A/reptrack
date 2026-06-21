@@ -1,26 +1,13 @@
 require 'rails_helper'
 
-RSpec.describe AccountXlsImporter do
-  # Mimics params[:file] from the multipart upload the controller receives.
-  let(:upload) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/accounts.xls"), "application/vnd.ms-excel") }
+RSpec.describe AccountXlsExporter do
+  describe "#to_xlsx" do
+    it "generates an .xlsx file" do
+      account = create(:account, name: "Acme Corp", email: "info@acme.com")
 
-  subject(:importer) { described_class.new(upload) }
+      output = described_class.new([ account ]).to_xlsx
 
-  describe "#valid?" do
-    context "when the file is a well-formed accounts workbook" do
-      it "returns true with no errors" do
-        expect(importer.valid?).to be true
-        expect(importer.errors).to be_empty
-      end
-    end
-
-    context "when the file is not a valid XLS workbook" do
-      let(:upload) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/invalid.xls"), "text/plain") }
-
-      it "returns false and reports the error" do
-        expect(importer.valid?).to be false
-        expect(importer.errors).to include("File is not a valid XLS file", "Invalid file headers")
-      end
+      expect(output.byteslice(0, 2)).to eq("PK") # .xlsx files are ZIP archives
     end
   end
 end

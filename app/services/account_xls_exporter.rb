@@ -1,4 +1,4 @@
-# Exports accounts as a SpreadsheetML (Excel) workbook.
+# Exports accounts as an .xlsx (Office Open XML) workbook.
 class AccountXlsExporter
   include XlsExportable
 
@@ -26,15 +26,15 @@ class AccountXlsExporter
 
     [
       account.id,
-      account.user.try(:name),
-      account.assignee.try(:name),
       account.name,
+      account.rating,
       account.email,
       account.phone,
       account.access,
-      account.rating,
       account.category,
       account.website,
+      account.user.try(:name),
+      account.assignee.try(:name),
       account.created_at,
       account.updated_at,
       billing.try(:street1),

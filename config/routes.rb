@@ -5,8 +5,8 @@ Rails.application.routes.draw do
   resources :tasks
   resources :accounts do
     collection do
-      get :export, action: :index, defaults: { format: :xls }
-      post :import, action: :import, defaults: { format: :xls }
+      get :export, action: :index, defaults: { format: :xlsx }
+      post :import, action: :import, defaults: { format: :xlsx }
     end
   end
   resources :leads
