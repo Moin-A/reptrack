@@ -2,33 +2,6 @@
 class AccountXlsExporter
   include XlsExportable
 
-  HEADERS = [
-    "Id",
-    "User",
-    "Assigned To",
-    "Name",
-    "Email",
-    "Phone",
-    "Access",
-    "Rating",
-    "Category",
-    "Website",
-    "Date Created",
-    "Date Updated",
-    "Billing Street1",
-    "Billing Street2",
-    "Billing City",
-    "Billing State",
-    "Billing Zipcode",
-    "Billing Country",
-    "Shipping Street1",
-    "Shipping Street2",
-    "Shipping City",
-    "Shipping State",
-    "Shipping Zipcode",
-    "Shipping Country"
-  ].freeze
-
   def initialize(accounts)
     @accounts = accounts
   end
@@ -44,7 +17,7 @@ class AccountXlsExporter
   end
 
   def headers
-    HEADERS
+    Account.model_headers
   end
 
   def row(account)
