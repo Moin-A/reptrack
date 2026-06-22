@@ -2,53 +2,26 @@
 class AccountXlsExporter
   include XlsExportable
 
-  def initialize(accounts)
-    @accounts = accounts
+  def initialize(records)
+    @records = records
+    @base_class = records.first.class unless records.empty?
   end
 
   private
 
   def records
-    @accounts
+    @records
   end
 
   def worksheet_name
-    "Accounts"
+    @base_class.name
   end
 
   def headers
-    Account.model_headers
+    @base_class&.model_headers 
   end
 
-  def row(account)
-    billing  = account.billing_address
-    shipping = account.shipping_address
-
-    [
-      account.id,
-      account.name,
-      account.rating,
-      account.email,
-      account.phone,
-      account.access,
-      account.category,
-      account.website,
-      account.user.try(:name),
-      account.assignee.try(:name),
-      account.created_at,
-      account.updated_at,
-      billing.try(:street1),
-      billing.try(:street2),
-      billing.try(:city),
-      billing.try(:state),
-      billing.try(:zipcode),
-      billing.try(:country),
-      shipping.try(:street1),
-      shipping.try(:street2),
-      shipping.try(:city),
-      shipping.try(:state),
-      shipping.try(:zipcode),
-      shipping.try(:country)
-    ]
+  def row(record)
+    @base_class&.xls_columns&.map { |col| col.value_for(record) }
   end
 end
