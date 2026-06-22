@@ -10,6 +10,7 @@ require "caxlsx"
 module XlsExportable
   def to_xlsx
     package = Axlsx::Package.new
+    return if headers.blank? || records.blank?
     package.workbook.add_worksheet(name: worksheet_name) do |sheet|
       sheet.add_row(headers)
       records.each { |record| sheet.add_row(row(record)) }

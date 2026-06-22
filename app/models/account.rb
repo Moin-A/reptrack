@@ -15,21 +15,41 @@ class Account < ApplicationRecord
 
    with_permission
 
-   # Own columns we don't export as-is: foreign keys (shown as names instead)
-   # and timestamps (relabeled below).
-   EXCLUDED_COLUMNS = %w[user_id assignee_id created_at updated_at].freeze
+   # Ordered XLS schema: each column is a header label plus an accessor for its
+   # value (a Symbol method name, or a Proc for associations / nested records).
+   # Single source of truth for the export and the header row the importer checks.
+   def self.xls_columns
+     [
+       col("Id", :id),
+       col("Name", :name),
+       col("Rating", :rating),
+       col("Email", :email),
+       col("Phone", :phone),
+       col("Access", :access),
+       col("Category", :category),
+       col("Website", :website),
+       col("User", ->(a) { a.user&.name }),
+       col("Assigned To", ->(a) { a.assignee&.name }),
+       col("Date Created", :created_at),
+       col("Date Updated", :updated_at),
+       *address_cols("Billing", :billing_address),
+       *address_cols("Shipping", :shipping_address)
+     ].freeze
+   end
 
-   # Cross-model / relabeled columns that can't be derived from the schema:
-   # association names and the nested billing/shipping address fields.
-   CUSTOM_COLUMNS = [
-     "User", "Assigned To", "Date Created", "Date Updated",
-     "Billing Street1", "Billing Street2", "Billing City", "Billing State", "Billing Zipcode", "Billing Country",
-     "Shipping Street1", "Shipping Street2", "Shipping City", "Shipping State", "Shipping Zipcode", "Shipping Country"
-   ].freeze
-
-   # XLS column labels: the model's own scalar columns (titleized) followed by
-   # the custom cross-model columns.
+   # Header labels, derived from the schema so they can never drift from values.
    def self.model_headers
-     (column_names - EXCLUDED_COLUMNS).map(&:titleize) + CUSTOM_COLUMNS
+     xls_columns.map(&:header)
+   end
+
+   private_class_method def self.col(header, accessor)
+     XlsColumn.new(header: header, accessor: accessor)
+   end
+
+   # address col is wrapper of col to give more customizability to address fields
+   private_class_method def self.address_cols(prefix, association)
+     %i[street1 street2 city state zipcode country].map do |field|
+       col("#{prefix} #{field.to_s.capitalize}", ->(a) { a.public_send(association)&.public_send(field) })
+     end
    end
 end
