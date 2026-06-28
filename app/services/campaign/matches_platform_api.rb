@@ -3,6 +3,7 @@ module Campaign
   # Register new platforms here.
   class MatchesPlatformApi
     PLATFORMS = [
+      Platforms::Mastodon,
       Platforms::Test,
       Platforms::TestFailure,
       Platforms::TestSkipped

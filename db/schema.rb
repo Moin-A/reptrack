@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_06_23_063620) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_28_173400) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -94,6 +94,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_23_063620) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "kind", default: "post", null: false
+    t.bigint "assignee_id"
+    t.string "status"
+    t.index ["assignee_id"], name: "index_campaign_posts_on_assignee_id"
+    t.index ["status"], name: "index_campaign_posts_on_status"
     t.index ["user_id"], name: "index_campaign_posts_on_user_id"
   end
 
@@ -293,6 +297,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_23_063620) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "accounts"
   add_foreign_key "campaign_posts", "users"
+  add_foreign_key "campaign_posts", "users", column: "assignee_id"
   add_foreign_key "campaign_publications", "campaign_posts", column: "post_id"
   add_foreign_key "campaign_publications", "campaign_social_accounts", column: "social_account_id"
   add_foreign_key "campaign_social_accounts", "users"
