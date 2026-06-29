@@ -9,15 +9,25 @@ module Campaign
     #
     # params: campaign_post: { content, kind (post|ad), url (optional link) },
     #         file (uploaded media)
+    def index
+      render json: PostSerializer.normalize_records(@campaign_posts)
+    end
+
     def create
       @campaign_post.user = current_user
       @campaign_post.media.attach(params[:media]) if create_params[:media].present?
 
       if @campaign_post.save
-        render json: serialize(@campaign_post), status: :created
+         @campaign_post.draft!
+        render json: PostSerializer.new(@campaign_post).serializable_hash, status: :created
       else
         render json: { errors: @campaign_post.errors.full_messages }, status: :unprocessable_entity
       end
+    end
+
+    def destroy
+      @campaign_post.destroy
+      head :no_content
     end
 
     private
@@ -29,11 +39,19 @@ module Campaign
 
     def serialize(post)
       {
+        status: post.status,
         id: post.id,
         kind: post.kind,
         content: post.content,
         url: post.url,
-        media: post.media.map { |attachment| { id: attachment.id, filename: attachment.filename.to_s } }
+        media: post.media.map { |attachment|
+            {
+              id: attachment.id,
+              filename: attachment.filename.to_s,
+              url: url_for(attachment)            # or rails_blob_url(attachment)
+            }
+          },
+        pubs: post.publications.map { |pub| { id: pub.id, status: pub.status } }
       }
     end
   end
