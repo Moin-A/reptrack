@@ -36,23 +36,5 @@ module Campaign
     def create_params
       params.require(:campaign_post).permit(:content, :kind, :url, :media)
     end
-
-    def serialize(post)
-      {
-        status: post.status,
-        id: post.id,
-        kind: post.kind,
-        content: post.content,
-        url: post.url,
-        media: post.media.map { |attachment|
-            {
-              id: attachment.id,
-              filename: attachment.filename.to_s,
-              url: url_for(attachment)            # or rails_blob_url(attachment)
-            }
-          },
-        pubs: post.publications.map { |pub| { id: pub.id, status: pub.status } }
-      }
-    end
   end
 end
