@@ -35,6 +35,28 @@ RSpec.describe "Campaign posts", type: :request do
     end
   end
 
+  describe "PATCH /campaign/posts/:id" do
+    it "updates the user's own post" do
+      record = create(:post, user: user, content: "old content")
+
+      patch "/campaign/posts/#{record.id}", params: { campaign_post: { content: "new content", url: "https://reptrack.io/x" } }
+
+      expect(response).to have_http_status(:ok)
+      expect(record.reload.content).to eq("new content")
+      expect(record.url).to eq("https://reptrack.io/x")
+    end
+
+    it "does not update a post owned by another user" do
+      other_post = create(:post, content: "theirs")
+
+      expect {
+        patch "/campaign/posts/#{other_post.id}", params: { campaign_post: { content: "hacked" } }
+      }.to raise_error(CanCan::AccessDenied)
+
+      expect(other_post.reload.content).to eq("theirs")
+    end
+  end
+
   describe "DELETE /campaign/posts/:id" do
     it "deletes the user's own post" do
       record = create(:post, user: user)

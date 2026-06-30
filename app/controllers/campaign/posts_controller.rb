@@ -25,6 +25,18 @@ module Campaign
       end
     end
 
+    # PATCH/PUT /campaign/posts/:id — update a draft (content/kind/url, optional new media)
+    def update
+      new_media = params.dig(:campaign_post, :media)
+      @campaign_post.media.attach(new_media) if new_media.present?
+
+      if @campaign_post.update(update_params)
+        render json: PostSerializer.new(@campaign_post).serializable_hash
+      else
+        render json: { errors: @campaign_post.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
+
     def destroy
       @campaign_post.destroy
       head :no_content
@@ -35,6 +47,10 @@ module Campaign
     # CanCanCan builds @campaign_post from this on create.
     def create_params
       params.require(:campaign_post).permit(:content, :kind, :url, :media)
+    end
+
+    def update_params
+      params.require(:campaign_post).permit(:content, :kind, :url)
     end
   end
 end
