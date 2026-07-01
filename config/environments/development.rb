@@ -57,6 +57,9 @@ Rails.application.configure do
 
   config.active_job.queue_adapter = :sidekiq
 
+  # Store uploaded files on the local disk (see config/storage.yml).
+  config.active_storage.service = :local
+
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 

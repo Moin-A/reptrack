@@ -13,6 +13,10 @@ Rails.application.routes.draw do
   resources :groups
   resources :users, only: [ :index ]
   resources :activities, only: [ :index ]
+  namespace :campaign do
+    resources :posts, only: [ :index, :show, :create, :update, :destroy ]
+    resources :publications, only: [ :create ]
+  end
   devise_for :users, controllers: {
     sessions: "users/sessions",
     registrations: "users/registrations",

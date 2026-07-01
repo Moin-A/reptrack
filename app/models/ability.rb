@@ -14,8 +14,14 @@ class Ability
       can :manage, entities, assignee_id: user.id
       can :manage, entities, user_id: user.id
 
+      # Campaign posts have no access/assignee_id columns, so they can't share the
+      # CRM entity rules above. Owner is assigned in the controller on create.
+      can :create, Campaign::Post
+      can %i[read update destroy], Campaign::Post, user_id: user.id
+
       if user.admin?
         can :manage, entities
+        can :manage, Campaign::Post
       else
         permissions = Permission.arel_table
 
