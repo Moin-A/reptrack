@@ -3,6 +3,7 @@ module Campaign
     # Organic post vs paid ad. Ads publish through platforms' Marketing APIs
     # (a separate path) — the kind is recorded now; ad publishing comes later.
     enum :kind, { post: "post", ad: "ad" }
+    enum :status, { draft: "draft", published: "published" }
 
     belongs_to :user
     has_many :publications, dependent: :destroy

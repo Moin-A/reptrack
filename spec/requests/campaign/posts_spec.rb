@@ -10,9 +10,9 @@ RSpec.describe "Campaign posts", type: :request do
       post "/campaign/posts", params: { campaign_post: { content: "New 6am strength class", kind: "ad" } }
 
       expect(response).to have_http_status(:created)
-      body = JSON.parse(response.body)
-      expect(body).to include("content" => "New 6am strength class", "kind" => "ad")
-      expect(Campaign::Post.find(body["id"]).user).to eq(user)
+      data = JSON.parse(response.body)["data"]
+      expect(data["attributes"]).to include("content" => "New 6am strength class", "kind" => "ad")
+      expect(Campaign::Post.find(data["id"]).user).to eq(user)
     end
 
     it "attaches an uploaded file to the post's media" do
@@ -32,6 +32,49 @@ RSpec.describe "Campaign posts", type: :request do
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(JSON.parse(response.body)["errors"]).to include(a_string_matching(/Content can't be blank/))
+    end
+  end
+
+  describe "PATCH /campaign/posts/:id" do
+    it "updates the user's own post" do
+      record = create(:post, user: user, content: "old content")
+
+      patch "/campaign/posts/#{record.id}", params: { campaign_post: { content: "new content", url: "https://reptrack.io/x" } }
+
+      expect(response).to have_http_status(:ok)
+      expect(record.reload.content).to eq("new content")
+      expect(record.url).to eq("https://reptrack.io/x")
+    end
+
+    it "does not update a post owned by another user" do
+      other_post = create(:post, content: "theirs")
+
+      expect {
+        patch "/campaign/posts/#{other_post.id}", params: { campaign_post: { content: "hacked" } }
+      }.to raise_error(CanCan::AccessDenied)
+
+      expect(other_post.reload.content).to eq("theirs")
+    end
+  end
+
+  describe "DELETE /campaign/posts/:id" do
+    it "deletes the user's own post" do
+      record = create(:post, user: user)
+
+      delete "/campaign/posts/#{record.id}"
+
+      expect(response).to have_http_status(:no_content)
+      expect(Campaign::Post.exists?(record.id)).to be(false)
+    end
+
+    it "does not delete a post owned by another user" do
+      other_post = create(:post) # different user
+
+      expect {
+        delete "/campaign/posts/#{other_post.id}"
+      }.to raise_error(CanCan::AccessDenied)
+
+      expect(Campaign::Post.exists?(other_post.id)).to be(true)
     end
   end
 end
