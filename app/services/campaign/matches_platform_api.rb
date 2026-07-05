@@ -4,6 +4,7 @@ module Campaign
   class MatchesPlatformApi
     PLATFORMS = [
       Platforms::Mastodon,
+      Platforms::Facebook,
       Platforms::Test,
       Platforms::TestFailure,
       Platforms::TestSkipped

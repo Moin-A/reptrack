@@ -16,7 +16,16 @@ Rails.application.routes.draw do
   namespace :campaign do
     resources :posts, only: [ :index, :show, :create, :update, :destroy ]
     resources :publications, only: [ :create ]
+    resources :social_accounts, only: [ :index, :create ] do
+      get :connect_token, on: :collection
+      post :refresh, on: :member
+    end
   end
+
+  # OAuth connect for social accounts. OmniAuth middleware handles the request
+  # phase (POST /auth/:provider); these handle the callback + failure.
+  get "/auth/:provider/callback", to: "campaign/omniauth_callbacks#create"
+  get "/auth/failure",           to: "campaign/omniauth_callbacks#failure"
   devise_for :users, controllers: {
     sessions: "users/sessions",
     registrations: "users/registrations",

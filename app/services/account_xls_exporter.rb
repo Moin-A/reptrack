@@ -18,7 +18,7 @@ class AccountXlsExporter
   end
 
   def headers
-    @base_class&.model_headers 
+    @base_class&.model_headers
   end
 
   def row(record)

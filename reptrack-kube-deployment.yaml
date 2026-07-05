@@ -51,6 +51,11 @@ spec:
                 secretKeyRef:
                   name: ses-credentials
                   key: SMTP_PASSWORD
+            - name: AR_ENCRYPTION_PRIMARY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: encryption-keys
+                  key: AR_ENCRYPTION_PRIMARY_KEY
           volumeMounts:
             - name: hosts-config
               mountPath: /rails/config/initializers/zz_hosts.rb

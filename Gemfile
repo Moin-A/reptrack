@@ -61,3 +61,9 @@ gem "faker", "~> 3.6"
 gem "pagy"
 gem "sidekiq", "~> 7.0"
 gem "sidekiq-failures"
+
+gem "omniauth-facebook", "~> 10.0"
+
+gem "omniauth-rails_csrf_protection", "~> 2.0"
+
+gem "dotenv-rails", "~> 3.2", groups: [ :development, :test ]
