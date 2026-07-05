@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_04_104344) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_05_152643) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -274,6 +274,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_04_104344) do
     t.bigint "user_id"
     t.integer "asset_id"
     t.string "asset_type"
+    t.integer "completed_by_id"
+    t.datetime "completed_at"
     t.index ["asset_id", "asset_type"], name: "index_tasks_on_asset_id_and_asset_type"
     t.index ["user_id"], name: "index_tasks_on_user_id"
   end

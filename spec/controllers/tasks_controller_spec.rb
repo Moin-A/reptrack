@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe TasksController, type: :controller do
-  let(:valid_attributes) { { name: "Fix login bug", description: "Investigate OAuth", due_date: 3.days.from_now, status: 0 } }
+  let(:valid_attributes) { { name: "Fix login bug", description: "Investigate OAuth", due_date: 3.days.from_now, status: :completed } }
   let(:invalid_attributes) { { name: "" } }
   let(:pagination_params) { Task.buckets.keys.index_with(1) }
   let(:user) { create(:user, confirmed_at: Time.now) }
@@ -100,6 +100,23 @@ RSpec.describe TasksController, type: :controller do
         patch :update, params: { id: task.id, task: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_content)
       end
+    end
+  end
+
+  describe "POST #complete" do
+    let(:user2) { create(:user, confirmed_at: Time.now) }
+    let!(:task) { create(:task, user: user2) }
+
+    it "completes the task" do
+      task.update(user: user)
+      post :complete, params: { id: task.id }
+      expect(task.reload.status).to eq("completed")
+    end
+
+    it "returns a cancan authorization error" do
+     expect {
+       post :complete, params: { id: task.id }
+     }.to raise_error(CanCan::AccessDenied)
     end
   end
 

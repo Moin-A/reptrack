@@ -1,11 +1,11 @@
   class TasksController < ApplicationController
-  before_action :set_task, only: %i[ show update destroy ]
+  load_and_authorize_resource
   before_action :log_params
 
   # GET /tasks
   def index
     buckets, pagy_by_bucket = TaskSerializer.grouped_by_bucket do |bucket|
-      pagy(Task.in_bucket(bucket), page: page(bucket), limit: 5)
+      pagy(Task.incomplete.in_bucket(bucket), page: page(bucket), limit: 5)
     end
 
     pagination = pagy_by_bucket.transform_values do |p|
@@ -29,6 +29,14 @@
     else
       render json: @task.errors, status: :unprocessable_content
     end
+  end
+
+  def complete
+   if @task.update(status: :completed, completor: current_user, completed_at: Time.current)
+      render json: TaskSerializer.normalize(@task)
+   else
+      render json: @task.errors, status: :unprocessable_content
+   end
   end
 
   # PATCH/PUT /tasks/1

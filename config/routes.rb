@@ -2,7 +2,9 @@ require "sidekiq/web"
 
 Rails.application.routes.draw do
   mount Sidekiq::Web => "/sidekiq"
-  resources :tasks
+  resources :tasks do
+   post :complete, on: :member
+  end
   resources :accounts do
     collection do
       get :export, action: :index, defaults: { format: :xlsx }

@@ -1,14 +1,16 @@
 class Task < ApplicationRecord
   include Audit::AuditTrail
   has_paper_trail on: [ :create, :update, :destroy ]
-
+  belongs_to :completor, class_name: "User", foreign_key: :completed_by_id, optional: true
   validates :name, presence: { message: "must be Provided" }
   belongs_to :asset, polymorphic: true, optional: true
   belongs_to :assignee, class_name: "User", foreign_key: :assignee_id, optional: true
   belongs_to :user
   scope :assigned_to, ->(user) { where(assignee_id: user.id) }
   scope :in_bucket, ->(bucket) { where(bucket: bucket) }
+  scope :incomplete, -> { where(completor: nil) }
   before_save :set_due_date
+  enum :status, %i[pending completed]
   enum :bucket, %i[today tomorrow overdue as_soon_as_possible this_week next_week sometime_later]
 
   private
