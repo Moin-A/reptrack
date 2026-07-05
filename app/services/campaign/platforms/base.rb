@@ -12,6 +12,12 @@ module Campaign
       def publish!(_publication)
         raise NotImplementedError, "#{self.class} must implement #publish!"
       end
+
+      # Live metadata for the connected account (name, followers, …) fetched
+      # with its stored credentials. Returns { ok:, body:/message: }.
+      def fetch_metadata(_social_account)
+        { ok: false, message: "#{self.class::TAG} does not support metadata" }
+      end
     end
   end
 end

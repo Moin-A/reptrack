@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_06_28_173400) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_04_104344) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -127,7 +127,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_28_173400) do
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "preferences"
     t.index ["user_id"], name: "index_campaign_social_accounts_on_user_id"
+    t.check_constraint "platform_tag::text = ANY (ARRAY['facebook'::character varying, 'mastodon'::character varying, 'x'::character varying, 'instagram'::character varying, 'test'::character varying, 'test_failure'::character varying, 'test_skipped'::character varying]::text[])", name: "platform_tag_check"
   end
 
   create_table "contacts", force: :cascade do |t|

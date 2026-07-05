@@ -9,9 +9,16 @@ class ApplicationController < ActionController::API
     render json: { message: "Hello, world!" }
   end
 
+  rescue_from ActiveRecord::StatementInvalid, with: :handle_statement_invalid
 
   private
 
   def activities_params
+  end
+
+  def handle_statement_invalid(exception)
+    raise exception unless exception.cause.is_a?(PG::CheckViolation)
+    render json: { errors: [ "Platform not supported — choose Facebook, Mastodon, X, or Instagram." ] },
+             status: :unprocessable_entity
   end
 end

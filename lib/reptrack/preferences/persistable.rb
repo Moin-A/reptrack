@@ -5,7 +5,7 @@ module Reptrack
 
       included do
         include Preferable
-
+        serialize :preferences, type: Hash, coder: YAML
         after_initialize :initialize_preferences_defaults
       end
 
