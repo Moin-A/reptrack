@@ -56,6 +56,16 @@ spec:
                 secretKeyRef:
                   name: encryption-keys
                   key: AR_ENCRYPTION_PRIMARY_KEY
+            - name: AR_ENCRYPTION_DETERMINISTIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: encryption-keys
+                  key: AR_ENCRYPTION_DETERMINISTIC_KEY
+            - name: AR_ENCRYPTION_KEY_DERIVATION_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: encryption-keys
+                  key: AR_ENCRYPTION_KEY_DERIVATION_SALT
           volumeMounts:
             - name: hosts-config
               mountPath: /rails/config/initializers/zz_hosts.rb
