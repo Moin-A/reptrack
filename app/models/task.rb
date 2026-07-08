@@ -1,4 +1,5 @@
 class Task < ApplicationRecord
+  include Ransackable
   include Audit::AuditTrail
   has_paper_trail on: [ :create, :update, :destroy ]
   belongs_to :completor, class_name: "User", foreign_key: :completed_by_id, optional: true
