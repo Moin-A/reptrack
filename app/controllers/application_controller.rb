@@ -2,6 +2,7 @@ class ApplicationController < ActionController::API
   include Pagy::Backend
   include ActionController::Cookies
   include Audit::Controller
+  include Sortable
   before_action :set_audit_whodunnit
 
 

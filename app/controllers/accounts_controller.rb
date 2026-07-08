@@ -5,8 +5,12 @@ class AccountsController < ApplicationController
 
   def index
     # Ransack over the CanCan-scoped relation; a blank search is ignored by
-    # ransack, so no guard needed. The frontend sends a single `search` term.
-    accounts = @accounts.ransack(name_or_email_or_category_cont: params[:search]).result
+    # ransack, so no guard needed. The frontend sends a single `search` term
+    # and a friendly `sort` key (see Sortable).
+    accounts = @accounts.ransack(
+      name_or_email_or_category_cont: params[:search],
+      s: sort_expression
+    ).result
 
     respond_to do |format|
       format.json { render json: { accounts: AccountSerializer.normalize_records(accounts) } }
