@@ -7,7 +7,7 @@ module Sortable
   SORT_KEYS = {
     "oldest" => "created_at asc",
     "newest" => "created_at desc",
-    "name"   => "name asc",
+    "name"   => "name asc"
   }.freeze
 
   private
