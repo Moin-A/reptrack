@@ -2,7 +2,15 @@ class LeadsController < ApplicationController
   load_and_authorize_resource
 
   def index
-    render json: { leads: LeadSerializer.normalize_records(Lead.all) }
+    # Ransack over the CanCan-scoped relation (was Lead.all — which bypassed
+    # authorization scoping). Lead has no `name` column, so the "name" sort
+    # maps to first/last name.
+    leads = @leads.ransack(
+      first_name_or_last_name_or_company_or_email_cont: params[:search],
+      s: sort_expression(overrides: { "name" => [ "first_name asc", "last_name asc" ] })
+    ).result
+
+    render json: { leads: LeadSerializer.normalize_records(leads) }
   end
 
   def create

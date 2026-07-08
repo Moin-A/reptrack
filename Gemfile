@@ -34,6 +34,8 @@ gem "jsonapi-serializer"
 # Real .xlsx export (caxlsx) and import parsing (roo)
 gem "caxlsx"
 gem "roo"
+# Object-based searching / filtering for API query params
+gem "ransack"
 
 group :development do
   gem "bullet"

@@ -1,4 +1,5 @@
 class Account < ApplicationRecord
+   include Ransackable
    include Reptrack::Permission
    has_one :billing_address, -> { where(address_type: "billing") }, as: :addressable, class_name: "Address"
    has_one :shipping_address, -> { where(address_type: "shipping") }, as: :addressable, class_name: "Address"

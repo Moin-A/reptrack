@@ -4,10 +4,18 @@ class AccountsController < ApplicationController
   load_and_authorize_resource
 
   def index
+    # Ransack over the CanCan-scoped relation; a blank search is ignored by
+    # ransack, so no guard needed. The frontend sends a single `search` term
+    # and a friendly `sort` key (see Sortable).
+    accounts = @accounts.ransack(
+      name_or_email_or_category_cont: params[:search],
+      s: sort_expression
+    ).result
+
     respond_to do |format|
-      format.json { render json: { accounts: AccountSerializer.normalize_records(@accounts) } }
+      format.json { render json: { accounts: AccountSerializer.normalize_records(accounts) } }
       format.xlsx do
-        send_data AccountXlsExporter.new(@accounts).to_xlsx,
+        send_data AccountXlsExporter.new(accounts).to_xlsx,
           filename: "accounts_#{Date.current}.xlsx",
           type: :xlsx,
           disposition: "attachment"
