@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_05_152643) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_10_133125) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -129,7 +129,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_05_152643) do
     t.datetime "updated_at", null: false
     t.text "preferences"
     t.index ["user_id"], name: "index_campaign_social_accounts_on_user_id"
-    t.check_constraint "platform_tag::text = ANY (ARRAY['facebook'::character varying, 'mastodon'::character varying, 'x'::character varying, 'instagram'::character varying, 'test'::character varying, 'test_failure'::character varying, 'test_skipped'::character varying]::text[])", name: "platform_tag_check"
+    t.check_constraint "platform_tag::text = ANY (ARRAY['facebook'::character varying::text, 'mastodon'::character varying::text, 'x'::character varying::text, 'instagram'::character varying::text, 'test'::character varying::text, 'test_failure'::character varying::text, 'test_skipped'::character varying::text])", name: "platform_tag_check"
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -159,6 +159,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_05_152643) do
     t.bigint "assignee_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "account_id"
+    t.index ["account_id"], name: "index_contacts_on_account_id"
     t.index ["assignee_id"], name: "index_contacts_on_assignee_id"
     t.index ["lead_id"], name: "index_contacts_on_lead_id"
     t.index ["user_id"], name: "index_contacts_on_user_id"
@@ -233,6 +235,27 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_05_152643) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "opportunities", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "stage"
+    t.string "access", default: "Private"
+    t.date "closes_on"
+    t.integer "probability"
+    t.decimal "amount", precision: 12, scale: 2
+    t.decimal "discount", precision: 12, scale: 2
+    t.string "background_info"
+    t.bigint "account_id"
+    t.bigint "lead_id"
+    t.bigint "user_id"
+    t.bigint "assignee_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_opportunities_on_account_id"
+    t.index ["assignee_id"], name: "index_opportunities_on_assignee_id"
+    t.index ["lead_id"], name: "index_opportunities_on_lead_id"
+    t.index ["user_id"], name: "index_opportunities_on_user_id"
+  end
+
   create_table "permissions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "group_id"
@@ -305,10 +328,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_05_152643) do
   add_foreign_key "campaign_publications", "campaign_posts", column: "post_id"
   add_foreign_key "campaign_publications", "campaign_social_accounts", column: "social_account_id"
   add_foreign_key "campaign_social_accounts", "users"
+  add_foreign_key "contacts", "accounts"
   add_foreign_key "contacts", "leads"
   add_foreign_key "contacts", "users"
   add_foreign_key "contacts", "users", column: "assignee_id"
   add_foreign_key "groups_users", "users"
+  add_foreign_key "opportunities", "accounts"
+  add_foreign_key "opportunities", "leads"
+  add_foreign_key "opportunities", "users"
+  add_foreign_key "opportunities", "users", column: "assignee_id"
   add_foreign_key "permissions", "groups"
   add_foreign_key "permissions", "users"
   add_foreign_key "role_users", "roles"

@@ -92,5 +92,31 @@ RSpec.describe "Leads", type: :request do
         expect(response.parsed_body["errors"]).to be_present
       end
     end
+
+    context "convert" do
+      let(:lead) { create(:lead, **valid_attributes.except(:campaign, :tags, :permissions, :website)) }
+
+      # The convert payload nests under :lead, like the other lead endpoints.
+      let(:convert_params) do
+        {
+          lead: {
+            # Account validates email format and does not allow it blank.
+            opportunity: { name: "Acme — 500 seats", stage: "prospecting", amount: "5000.0", probability: 40 },
+            account:     { name: "Acme Corp", email: "ops@acme.test" },
+            assignee_id: assignee.id
+          }
+        }
+      end
+
+      it "creates a contact and lead linked to the lead" do
+        expect {
+          post convert_lead_url(lead), params: convert_params, as: :json
+        }.to change(Contact, :count).by(1)
+
+        expect(response).to have_http_status(:ok)
+        expect(Contact.last.lead_id).to eq(lead.id)
+        expect(lead.reload.status).to eq("converted")
+      end
+    end
   end
 end

@@ -11,7 +11,9 @@ Rails.application.routes.draw do
       post :import, action: :import, defaults: { format: :xlsx }
     end
   end
-  resources :leads
+  resources :leads do
+    post :convert, on: :member
+  end
   resources :groups
   resources :users, only: [ :index ]
   resources :activities, only: [ :index ]

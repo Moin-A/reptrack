@@ -4,7 +4,7 @@ RSpec.describe Account, type: :model do
   describe '#permissions' do
     let(:user)    { create(:user) }
     let(:group)   { Group.create!(name: 'Editors') }
-    let(:account) { Account.create!(email: 'test@example.com') }
+    let(:account) { Account.create!(email: 'test@example.com', name: 'Test Account') }
 
     before { Audit::Request.whodunnit = user.id }
     after  { Audit::Request.whodunnit = nil }
@@ -15,7 +15,7 @@ RSpec.describe Account, type: :model do
     end
 
     it 'does not return permissions belonging to a different account' do
-      other = Account.create!(email: 'other@example.com')
+      other = Account.create!(email: 'other@example.com', name: 'Other Account')
       Permission.create!(user: user, group: group, asset: other, action: 'all')
       expect(account.permissions).to be_empty
     end
@@ -23,7 +23,7 @@ RSpec.describe Account, type: :model do
 
   describe '#user_ids=' do
     let(:group)   { Group.create!(name: 'Test Group') }
-    let(:account) { Account.create!(email: 'test@example.com') }
+    let(:account) { Account.create!(email: 'test@example.com', name: 'Test Account') }
     let(:user1)   { create(:user) }
     let(:user2)   { create(:user) }
     let(:user3)   { create(:user) }
@@ -74,7 +74,7 @@ RSpec.describe Account, type: :model do
 
   describe '#group_ids=' do
     let(:user)    { create(:user) }
-    let(:account) { Account.create!(email: 'group_test@example.com') }
+    let(:account) { Account.create!(email: 'group_test@example.com', name: 'Group Test Account') }
     let(:group1)  { Group.create!(name: 'Group One') }
     let(:group2)  { Group.create!(name: 'Group Two') }
 
@@ -102,18 +102,18 @@ RSpec.describe Account, type: :model do
 
   describe 'email format validation' do
     it 'is valid with a properly formatted email' do
-      account = Account.new(email: 'user@example.com')
+      account = Account.new(email: 'user@example.com', name: 'Test Account')
       expect(account).to be_valid
     end
 
     it 'is invalid when email contains a space' do
-      account = Account.new(email: 'user @example.com')
+      account = Account.new(email: 'user @example.com', name: 'Test Account')
       expect(account).not_to be_valid
       expect(account.errors[:email]).to be_present
     end
 
     it 'is invalid when email is missing the @ symbol' do
-      account = Account.new(email: 'userexample.com')
+      account = Account.new(email: 'userexample.com', name: 'Test Account')
       expect(account).not_to be_valid
       expect(account.errors[:email]).to be_present
     end

@@ -11,6 +11,7 @@ class ApplicationController < ActionController::API
   end
 
   rescue_from ActiveRecord::StatementInvalid, with: :handle_statement_invalid
+  rescue_from ActiveRecord::RecordNotFound, with: :handle_record_not_found
 
   private
 
@@ -21,5 +22,9 @@ class ApplicationController < ActionController::API
     raise exception unless exception.cause.is_a?(PG::CheckViolation)
     render json: { errors: [ "Platform not supported — choose Facebook, Mastodon, X, or Instagram." ] },
              status: :unprocessable_entity
+  end
+
+  def handle_record_not_found(exception)
+    render json: { errors: [ "#{exception.model} not found" ] }, status: :not_found
   end
 end

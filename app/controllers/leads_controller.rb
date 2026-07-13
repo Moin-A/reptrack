@@ -36,6 +36,22 @@ class LeadsController < ApplicationController
     head :no_content
   end
 
+  def convert
+    @account, @opportunity, @contact = @lead.promote(convert_params)
+
+    render json: {
+        lead:        LeadSerializer.normalize(@lead),
+        account:     AccountSerializer.normalize(@account),
+        contact:     ContactSerializer.normalize(@contact),
+        opportunity: (OpportunitySerializer.normalize(@opportunity) if @opportunity&.persisted?)
+      }, status: :ok
+    rescue ActiveRecord::RecordInvalid => e
+      render json: {
+        errors:    e.record.errors.full_messages,
+        failed_on: e.record.class.name.underscore
+      }, status: :unprocessable_entity
+  end
+
   private
 
   def lead_params
@@ -45,6 +61,17 @@ class LeadsController < ApplicationController
       :blog, :linkedin, :facebook, :twitter,
       :rating, :do_not_call, :background_info, :access, :assignee_id,
       business_address_attributes: [ :street1, :street2, :city, :state, :zipcode, :country ],
+    )
+  end
+
+  # Nested under :lead like the other actions in this controller (and like Rails
+  # param wrapping). Describes the records to build *from* the lead being converted.
+  def convert_params
+    params.fetch(:lead, {}).permit(
+      :access,
+      :assignee_id,
+      account:     [ :id, :name, :email ],
+      opportunity: [ :name, :stage, :closes_on, :probability, :amount, :discount ]
     )
   end
 end
