@@ -2,6 +2,7 @@ require_relative "boot"
 
 require "rails/all"
 require_relative "../lib/reptrack"
+require_relative "../lib/reptrack/permission"
 require_relative "../app/middleware/hello_middleware"
 require_relative "../lib/audit/audit_trail"
 # Require the gems listed in Gemfile, including any gems
@@ -16,7 +17,9 @@ module Reptrack
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w[assets tasks])
+    # permission.rb is required at boot (it patches ActiveRecord::Base), so it
+    # must stay out of the autoloader's hands.
+    config.autoload_lib(ignore: %w[assets tasks reptrack/permission.rb])
     config.autoload_paths << Rails.root.join("app/serializers/concerns")
 
     # Configuration for the application, engines, and railties goes here.
