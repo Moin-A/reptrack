@@ -3,8 +3,10 @@ class Account < ApplicationRecord
    has_one :billing_address, -> { where(address_type: "billing") }, as: :addressable, class_name: "Address"
    has_one :shipping_address, -> { where(address_type: "shipping") }, as: :addressable, class_name: "Address"
    has_many :addresses, as: :addressable, class_name: "Address"
-   has_many :contacts, class_name: "Contact"
-   has_many :opportunities
+   # Both tables carry a foreign key to accounts, so the children must go with
+   # the parent — Postgres refuses to delete an account that is still referenced.
+   has_many :contacts, class_name: "Contact", dependent: :destroy
+   has_many :opportunities, dependent: :destroy
 
 
    accepts_nested_attributes_for :shipping_address, allow_destroy: true
@@ -30,6 +32,13 @@ class Account < ApplicationRecord
      end
 
      account = Account.new(params)
+
+     # Ownership comes from the lead, not the payload. Without it the account is
+     # invisible: CanCan only grants access when the record is Public, assigned
+     # to you, or owned by you — so a nil user_id hides it from every user.
+     account.user        = lead.user
+     account.assignee_id = assignee_id.presence || lead.assignee_id
+
      if account.access != "Lead" || lead.nil?
        account.save!
      else

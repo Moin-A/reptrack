@@ -22,7 +22,7 @@ class Lead < ApplicationRecord
   # Returns [account, opportunity, contact] so the caller can inspect errors.
   def promote(params = {})
     transaction do
-      account     = Account.create_or_select_for(self, params[:account])
+      account     = Account.create_or_select_for(self, params[:account], assignee_id: params[:assignee_id])
       opportunity = Opportunity.create_for(self, account, params[:opportunity])
       contact     = Contact.create_for(self, account, params)
 

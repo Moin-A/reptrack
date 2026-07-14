@@ -56,6 +56,27 @@ RSpec.describe "Leads convert", type: :request do
       expect(account.access).to eq("Private")
     end
 
+    # Without an owner the account is invisible: CanCan only grants access when a
+    # record is Public, assigned to you, or owned by you. A nil user_id would let
+    # the account be created and then vanish from the accounts list.
+    it "gives the new account an owner so it is visible to the user" do
+      convert!(payload)
+      account = Account.last
+
+      expect(account.user_id).to     eq(lead.user_id)
+      expect(account.assignee_id).to eq(assignee.id)
+      expect(Account.accessible_by(Ability.new(user))).to include(account)
+    end
+
+    it "cascades to contacts and opportunities when the account is deleted" do
+      convert!(payload)
+      account = Account.last
+
+      expect { account.destroy! }
+        .to change(Contact, :count).by(-1)
+        .and change(Opportunity, :count).by(-1)
+    end
+
     it "does not create an opportunity when no name is given" do
       payload[:opportunity][:name] = nil
       expect { convert!(payload) }.not_to change(Opportunity, :count)
