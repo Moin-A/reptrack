@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   resources :leads do
     post :convert, on: :member
   end
+  resources :opportunities
   resources :groups
   resources :users, only: [ :index ]
   resources :activities, only: [ :index ]
