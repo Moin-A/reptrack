@@ -1,0 +1,35 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [ production ]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          clean: true
+
+      - name: Copy deploy script to EC2
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > /tmp/ec2_key
+          chmod 600 /tmp/ec2_key
+          ssh -i /tmp/ec2_key -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "mkdir -p ~/reptrack"
+          scp -i /tmp/ec2_key -o StrictHostKeyChecking=no deploy_script_production.sh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/reptrack/
+          rm -f /tmp/ec2_key
+
+      - name: SSH into EC2 and run deploy script
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: DOCKER_USERNAME,DOCKER_PASSWORD
+          script: |
+            chmod +x ~/reptrack/deploy_script_production.sh
+            ~/reptrack/deploy_script_production.sh
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
