@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+  namespace: reptrack
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: reptrack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: reptrack
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reptrack-worker
+  namespace: reptrack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reptrack-worker
+  template:
+    metadata:
+      labels:
+        app: reptrack-worker
+    spec:
+      containers:
+        - name: reptrack-worker
+          image: moindev/reptrack:latest
+          imagePullPolicy: Always
+          command: ["bundle", "exec", "sidekiq"]
+          envFrom:
+            - secretRef:
+                name: reptrack-secrets
+          env:
+            - name: RAILS_ENV
+              value: "production"
+            - name: REDIS_URL
+              value: "redis://redis:6379/0"
+            - name: SMTP_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: ses-credentials
+                  key: SMTP_ADDRESS
+            - name: SMTP_USER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: ses-credentials
+                  key: SMTP_USER_NAME
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ses-credentials
+                  key: SMTP_PASSWORD
+            - name: AR_ENCRYPTION_PRIMARY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: encryption-keys
+                  key: AR_ENCRYPTION_PRIMARY_KEY
+            - name: AR_ENCRYPTION_DETERMINISTIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: encryption-keys
+                  key: AR_ENCRYPTION_DETERMINISTIC_KEY
+            - name: AR_ENCRYPTION_KEY_DERIVATION_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: encryption-keys
+                  key: AR_ENCRYPTION_KEY_DERIVATION_SALT
