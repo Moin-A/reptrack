@@ -27,7 +27,7 @@ echo "--- Docker Login ---"
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 echo "--- Building & Pushing ---"
-docker build --network=host -t "$IMAGE:$TAG" -t "$IMAGE:latest" .
+docker build --network=host -t "$IMAGE:$TAG" .
 docker push "$IMAGE:$TAG"
 docker push "$IMAGE:latest"
 
