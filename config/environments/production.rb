@@ -92,7 +92,7 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
 
   # So mailer URLs (confirmation links) resolve correctly
-  config.action_mailer.default_url_options = { host: ENV["FRONTEND_URL"] || "api.reptrack.co.in" }
+  config.action_mailer.default_url_options = { host: ENV["BACKEND_URL"] || "api.reptrack.co.in" }
 
   # Optional but useful while debugging — surface delivery errors instead of swallowing them
   config.action_mailer.raise_delivery_errors = true
