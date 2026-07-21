@@ -88,6 +88,25 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
+  # Delivery method — tell Rails to use SMTP
+  config.action_mailer.delivery_method = :smtp
+
+  # So mailer URLs (confirmation links) resolve correctly
+  config.action_mailer.default_url_options = { host: ENV["FRONTEND_URL"] || "api.reptrack.co.in" }
+
+  # Optional but useful while debugging — surface delivery errors instead of swallowing them
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_deliveries = true
+
+  config.action_mailer.smtp_settings = {
+    address:              ENV["SMTP_ADDRESS"],
+    port:                 587,
+    user_name:            ENV["SMTP_USER_NAME"],
+    password:             ENV["SMTP_PASSWORD"],
+    authentication:       :login,
+    enable_starttls_auto: true
+  }
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com
