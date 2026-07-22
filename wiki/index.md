@@ -8,7 +8,7 @@ Master catalog of all pages.
 
 | Page | Summary |
 |------|---------|
-| [bash-commands](bash/bash-commands.md) | Core bash commands: variables, file ops, find, SSH, permissions, conditionals, loops |
+| [bash-commands](bash/bash-commands.md) | Core bash commands: variables, file ops, find, sed, SSH, permissions, conditionals, loops |
 
 ---
 
@@ -18,6 +18,14 @@ Master catalog of all pages.
 |------|---------|
 | [kubernetes](kubernetes/kubernetes.md) | Key concepts: manifest anatomy, Service, Ingress, Traefik middleware, canary deployments |
 | [expose-pod](kubernetes/expose-pod.md) | Expose a pod as a NodePort Service using kubectl expose |
+
+---
+
+## PostgreSQL
+
+| Page | Summary |
+|------|---------|
+| [postgresql-commands](postgres/postgresql-commands.md) | psql connecting, meta-commands, roles, postgresql.conf/pg_hba.conf, network access, and backup/restore |
 
 ---
 
