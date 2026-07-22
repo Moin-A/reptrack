@@ -4,7 +4,7 @@
 
 **Tags:** bash, shell, scripting, linux, unix
 
-**Last updated:** 2026-04-08
+**Last updated:** 2026-07-22
 
 ---
 
@@ -63,6 +63,45 @@ which command                     # locate a command
 DEPLOY_YAML=$(find . -regex ".*kube.*deployment.*\.yaml" | head -n 1)
 # head -n 1 — take only first match
 ```
+
+---
+
+## Stream Editing with `sed`
+
+`sed` (stream editor) edits text in a stream or file non-interactively — ideal for scripted config changes on a remote server.
+
+```bash
+sudo sed -i "s/OLD/NEW/" file.conf   # find OLD, replace with NEW, save in place
+```
+
+### Substitute command breakdown — `s/OLD/NEW/`
+
+| Part | Meaning |
+|------|---------|
+| `sed` | stream editor — edits text |
+| `-i` | in-place — write changes back to the file |
+| `s` | substitute command |
+| `/` | separator between the parts |
+| `OLD` | the text to find |
+| `NEW` | the replacement text |
+| trailing `/` | closes the substitute command |
+
+So `s/OLD/NEW/` = find `OLD`, replace with `NEW`; `-i` writes it to disk.
+
+### Example — open Postgres to the private network
+
+```bash
+sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" postgresql.conf
+```
+
+This un-comments the line and switches `localhost` → `*` in one shot.
+
+- `postgresql.conf` is the main Postgres server config (listen addresses, memory, connection limits, logging).
+- `listen_addresses` governs **which network interfaces** Postgres accepts connections on:
+  - `localhost` (default) → only the same machine can connect
+  - `*` → listens on all interfaces, so other machines (e.g. an app EC2 instance) can reach it over the private network
+
+> `listen_addresses` decides *where* Postgres listens; `pg_hba.conf` then decides *who* among those connections may actually log in. Apply both with `sudo systemctl restart postgresql`.
 
 ---
 

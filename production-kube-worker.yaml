@@ -1,109 +1,159 @@
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: Namespace
 metadata:
-  name: redis-pvc
-  namespace: reptrack
+  name: monitoring
+---
+# --- Traefik metrics enablement ---
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
 spec:
-  accessModes: ["ReadWriteOnce"]
-  resources:
-    requests:
-      storage: 1Gi
+  valuesContent: |-
+    metrics:
+      prometheus:
+        entryPoint: metrics
+    ports:
+      metrics:
+        port: 9100
+        expose:
+          default: true
+---
+# --- Prometheus config ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 30s
+    scrape_configs:
+      - job_name: traefik
+        static_configs:
+          - targets: ['traefik.kube-system.svc.cluster.local:9100']
+      - job_name: postgres
+        static_configs:
+          - targets: ['postgres-exporter.monitoring.svc.cluster.local:9187']
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis
-  namespace: reptrack
+  name: prometheus
+  namespace: monitoring
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: redis
+      app: prometheus
   template:
     metadata:
       labels:
-        app: redis
+        app: prometheus
     spec:
       containers:
-        - name: redis
-          image: redis:7-alpine
+        - name: prometheus
+          image: prom/prometheus:latest
+          args:
+            - '--config.file=/etc/prometheus/prometheus.yml'
+            - '--storage.tsdb.retention.time=6h'
           ports:
-            - containerPort: 6379
+            - containerPort: 9090
           volumeMounts:
-            - name: redis-data
-              mountPath: /data
+            - name: config
+              mountPath: /etc/prometheus
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "300Mi"
       volumes:
-        - name: redis-data
-          persistentVolumeClaim:
-            claimName: redis-pvc
+        - name: config
+          configMap:
+            name: prometheus-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis
-  namespace: reptrack
+  name: prometheus
+  namespace: monitoring
 spec:
   selector:
-    app: redis
+    app: prometheus
   ports:
-    - port: 6379
-      targetPort: 6379
+    - port: 9090
+      targetPort: 9090
 ---
+# --- Grafana ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: reptrack-worker
-  namespace: reptrack
+  name: grafana
+  namespace: monitoring
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: reptrack-worker
+      app: grafana
   template:
     metadata:
       labels:
-        app: reptrack-worker
+        app: grafana
     spec:
       containers:
-        - name: reptrack-worker
-          image: moindev/reptrack:latest
-          imagePullPolicy: Always
-          command: ["bundle", "exec", "sidekiq"]
-          envFrom:
-            - secretRef:
-                name: reptrack-secrets
+        - name: grafana
+          image: grafana/grafana:latest
+          ports:
+            - containerPort: 3000
           env:
-            - name: RAILS_ENV
-              value: "production"
-            - name: REDIS_URL
-              value: "redis://redis:6379/0"
-            - name: SMTP_ADDRESS
+            - name: GF_SECURITY_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: ses-credentials
-                  key: SMTP_ADDRESS
-            - name: SMTP_USER_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: ses-credentials
-                  key: SMTP_USER_NAME
-            - name: SMTP_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: ses-credentials
-                  key: SMTP_PASSWORD
-            - name: AR_ENCRYPTION_PRIMARY_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: encryption-keys
-                  key: AR_ENCRYPTION_PRIMARY_KEY
-            - name: AR_ENCRYPTION_DETERMINISTIC_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: encryption-keys
-                  key: AR_ENCRYPTION_DETERMINISTIC_KEY
-            - name: AR_ENCRYPTION_KEY_DERIVATION_SALT
-              valueFrom:
-                secretKeyRef:
-                  name: encryption-keys
-                  key: AR_ENCRYPTION_KEY_DERIVATION_SALT
+                  name: grafana-admin
+                  key: admin-password
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "150Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  selector:
+    app: grafana
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  namespace: monitoring
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - grafana.reptrack.co.in
+      secretName: grafana-tls
+  rules:
+    - host: grafana.reptrack.co.in
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000

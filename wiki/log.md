@@ -4,6 +4,28 @@ Append-only record of all ingestions, queries, and updates.
 
 ---
 
+## 2026-07-22 — update
+- Source: user command — kubectl exec pg_dump for reptrack_production
+- Pages affected: `postgres/postgresql-commands.md`
+- Notes: Added "Dumping from a Kubernetes pod" subsection — `kubectl exec -n reptrack deploy/postgres -- pg_dump ... > file.sql` with a part-by-part breakdown and the note that the redirect writes the dump to the local host.
+
+---
+
+## 2026-07-22 — create
+- Source: user request — Postgres commands page
+- Pages created: `postgres/postgresql-commands.md`
+- Pages affected: `index.md`
+- Notes: New `postgres/` topic folder and page covering psql connection/flags, meta-commands, roles & databases, postgresql.conf vs pg_hba.conf (listen_addresses, private-network access), applying config changes, pg_dump/pg_restore backups, and service management. Cross-links to bash-commands for the sed edit.
+
+---
+
+## 2026-07-22 — update
+- Source: user-provided sed / postgresql.conf explanation
+- Pages affected: `bash/bash-commands.md`, `index.md`
+- Notes: Added "Stream Editing with sed" section — `s/OLD/NEW/` breakdown, `-i` in-place flag, and a Postgres example using `sed` to flip `listen_addresses` from `localhost` to `*` (with pg_hba.conf / systemctl restart context).
+
+---
+
 ## 2026-05-13 — create
 - Source: conversation — session cookie security discussion
 - Pages created: `security/session-cookies.md`
