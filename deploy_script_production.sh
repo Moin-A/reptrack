@@ -29,38 +29,44 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 echo "--- Building & Pushing ---"
 docker build --network=host -t "$IMAGE:$TAG" .
 docker push "$IMAGE:$TAG"
-docker push "$IMAGE:latest"
 
-# Find production manifests (matches .yml or .yaml)
-DEPLOY_YAML=$(find . -regex ".*production.*deployment.*\.ya?ml" | head -n 1)
-WORKER_YAML=$(find . -regex ".*production.*worker.*\.ya?ml" | head -n 1)
 
 # Local k3s config — this runs ON EC2
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
-if [ -z "$DEPLOY_YAML" ]; then
-    echo "❌ ERROR: Deployment manifest not found!"
-    exit 1
-fi
-
 # Apply manifests — creates resources first run, updates structure after
 echo "--- Applying Manifests ---"
-kubectl apply -f "$DEPLOY_YAML"
-if [ -n "$WORKER_YAML" ]; then
-    kubectl apply -f "$WORKER_YAML"
-fi
+kubectl apply -f production-kube-deployment.yaml
+kubectl apply -f production-kube-worker.yaml
+kubectl apply -f reptrack-api-prod-deployment.yaml
+
 
 # Force rollout with the immutable SHA tag
 echo "--- Deploying $TAG ---"
 kubectl set image deployment/reptrack-api reptrack-api="$IMAGE:$TAG" -n reptrack
-if [ -n "$WORKER_YAML" ]; then
-    kubectl set image deployment/reptrack-worker reptrack-worker="$IMAGE:$TAG" -n reptrack
-fi
+kubectl set image deployment/reptrack-worker reptrack-worker="$IMAGE:$TAG" -n reptrack
+
 
 kubectl rollout status deployment/reptrack-api -n reptrack --timeout=180s
-if [ -n "$WORKER_YAML" ]; then
-    kubectl rollout status deployment/reptrack-worker -n reptrack --timeout=180s
+kubectl rollout status deployment/reptrack-worker -n reptrack --timeout=180s
+
+
+if ! kubectl get deployment cert-manager -n cert-manager &>/dev/null; then
+    echo "--- Ensuring cert-manager ---"
+    kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.2/cert-manager.yaml
+    kubectl wait --for=condition=Available deployment/cert-manager -n cert-manager --timeout=120s
+    kubectl wait --for=condition=Available deployment/cert-manager-webhook -n cert-manager --timeout=120s
+else
+    echo "--- cert-manager already installed, skipping ---"
 fi
+
+
+#Create/update Cloudflare secret (value from GitHub Secrets, never in git) ---
+echo "--- Syncing Cloudflare API token secret ---"
+kubectl create secret generic cloudflare-api-token \
+    --from-literal=api-token="$CLOUDFLARE_API_TOKEN" \
+    -n cert-manager \
+    --dry-run=client -o yaml | kubectl apply -f -
 
 echo "Production deploy of $TAG complete!"
