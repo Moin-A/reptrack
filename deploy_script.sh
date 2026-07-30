@@ -3,6 +3,7 @@ set -euo pipefail
 
 # Step 1: Initialize repository for reptrack
 TARGET_DIR="$HOME/reptrack"
+IMAGE="$DOCKER_USERNAME/reptrack"
 mkdir -p "$TARGET_DIR"
 cd "$TARGET_DIR"
 
@@ -20,13 +21,19 @@ else
 fi
 
 # Step 3: Docker build
+TAG=$(git rev-parse --short HEAD)
+echo "--- Image tag: $TAG ---"
+
 echo "--- Docker Login ---"
 echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
 
-# Step 4: Docker push
 echo "--- Building & Pushing ---"
-docker build --network=host -t $DOCKER_USERNAME/reptrack:latest .
-docker push $DOCKER_USERNAME/reptrack:latest
+docker build --network=host -t "$IMAGE:$TAG" .
+docker push "$IMAGE:$TAG"
+
+# Step 4: Retag the same build as latest so the manifests' default ref stays current
+docker tag "$IMAGE:$TAG" "$IMAGE:latest"
+docker push "$IMAGE:latest"
 
 # Step 5: Find Kubernetes manifest
 
@@ -43,9 +50,17 @@ fi
 # Step 6: Kubernetes apply
 echo "--- Applying Manifests ---"
 kubectl apply -f "$DEPLOY_YAML"
-if [ -n "$WORKER_YAML" ]; then     
+if [ -n "$WORKER_YAML" ]; then
    sudo kubectl apply -f "$WORKER_YAML"
 fi
+
+# Force rollout with the immutable SHA tag
+echo "--- Deploying $TAG ---"
+kubectl set image deployment/reptrack reptrack="$IMAGE:$TAG" -n reptrack
+kubectl set image deployment/reptrack-worker reptrack="$IMAGE:$TAG" -n reptrack
+
+kubectl rollout status deployment/reptrack -n reptrack --timeout=180s
+kubectl rollout status deployment/reptrack-worker -n reptrack --timeout=180s
 
 # Step 7: Database migration
 
