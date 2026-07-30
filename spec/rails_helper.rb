@@ -11,6 +11,10 @@ require 'rspec/rails'
 require 'cancan/matchers'
 # Add additional requires below this line. Rails is not loaded until this point!
 
+# Rack::Test drives request specs against the default host www.example.com, so the
+# subdomain elevator would otherwise try to switch to a "www" tenant schema.
+Apartment::Elevators::Subdomain.excluded_subdomains = %w[www api admin]
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
