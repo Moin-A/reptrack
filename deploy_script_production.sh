@@ -35,6 +35,16 @@ docker push "$IMAGE:$TAG"
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
+
+#Create/update Cloudflare secret (value from GitHub Secrets, never in git) ---
+echo "--- Syncing Cloudflare API token secret ---"
+kubectl create secret generic cloudflare-api-token \
+    --from-literal=api-token="$CLOUDFLARE_API_TOKEN" \
+    -n cert-manager \
+    --dry-run=client -o yaml | kubectl apply -f -
+
+
+
 # Apply manifests — creates resources first run, updates structure after
 echo "--- Applying Manifests ---"
 kubectl apply -f production-kube-deployment.yaml
@@ -62,11 +72,5 @@ else
 fi
 
 
-#Create/update Cloudflare secret (value from GitHub Secrets, never in git) ---
-echo "--- Syncing Cloudflare API token secret ---"
-kubectl create secret generic cloudflare-api-token \
-    --from-literal=api-token="$CLOUDFLARE_API_TOKEN" \
-    -n cert-manager \
-    --dry-run=client -o yaml | kubectl apply -f -
 
 echo "Production deploy of $TAG complete!"
