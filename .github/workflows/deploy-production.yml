@@ -26,7 +26,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DOCKER_USERNAME,DOCKER_PASSWORD
+          envs: DOCKER_USERNAME,DOCKER_PASSWORD,CLOUDFLARE_API_TOKEN
           script: |
             chmod +x ~/reptrack/deploy_script_production.sh
             ~/reptrack/deploy_script_production.sh
