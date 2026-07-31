@@ -116,10 +116,10 @@ spec:
                   key: admin-password
           resources:
             requests:
-              memory: "64Mi"
+              memory: "128Mi"
               cpu: "50m"
             limits:
-              memory: "150Mi"
+              memory: "384Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -157,3 +157,26 @@ spec:
                 name: grafana
                 port:
                   number: 3000
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: moinqa6@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+      - http01:
+          ingress:
+            class: traefik
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-api-token
+              key: api-token
+          selector:
+            dnsZones:
+              - "reptrack.co.in"          
