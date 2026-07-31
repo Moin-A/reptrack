@@ -177,6 +177,6 @@ spec:
             apiTokenSecretRef:
               name: cloudflare-api-token
               key: api-token
-          selector:
-            dnsZones:
-              - "reptrack.co.in"
+        selector:
+          dnsZones:
+            - "reptrack.co.in"
