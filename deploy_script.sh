@@ -37,8 +37,8 @@ docker push "$IMAGE:latest"
 
 # Step 5: Find Kubernetes manifest
 
-DEPLOY_YAML=$(find . -regex ".*kube.*deployment.*\.yaml" | head -n 1)
-WORKER_YAML=$(find . -regex ".*kube.*worker.*\.yaml" | head -n 1)
+DEPLOY_YAML="reptrack-kube-deployment.yaml"
+WORKER_YAML="reptrack-kube-worker-deployment.yaml"
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
