@@ -50,7 +50,7 @@ Apartment.configure do |config|
   #   end
   # end
   #
-  config.tenant_names = -> { ToDo_Tenant_Or_User_Model.pluck(:database) }
+  config.tenant_names = -> { Workspace.pluck(:name) }
 
   # PostgreSQL:
   #   Specifies whether to use PostgreSQL schemas or create a new database per Tenant.

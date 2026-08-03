@@ -153,6 +153,10 @@ GEM
     hashie (5.1.0)
       logger
     htmlentities (4.4.2)
+    httparty (0.24.2)
+      csv
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
     io-console (0.8.2)
@@ -234,6 +238,8 @@ GEM
     parser (3.3.11.1)
       ast (~> 2.4.1)
       racc
+    pay (8.3.0)
+      rails (>= 6.0.0)
     pg (1.6.3-aarch64-linux)
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-darwin)
@@ -307,6 +313,8 @@ GEM
       activerecord (>= 7.2)
       activesupport (>= 7.2)
       i18n
+    razorpay (3.2.4)
+      httparty (~> 0.14)
     rdoc (7.2.0)
       erb
       psych (>= 4.0.0)
@@ -439,12 +447,14 @@ DEPENDENCIES
   omniauth-facebook (~> 10.0)
   omniauth-rails_csrf_protection (~> 2.0)
   pagy
+  pay (~> 8.3)
   pg (~> 1.1)
   pry-rails
   puma (>= 5.0)
   rack-cors
   rails (~> 7.2.3)
   ransack
+  razorpay (~> 3.0)
   roo
   ros-apartment
   rspec-rails

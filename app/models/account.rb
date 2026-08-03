@@ -86,3 +86,10 @@ class Account < ApplicationRecord
      end
    end
 end
+
+
+# XlsColumn = Struct.new(:header, :accessor, keyword_init: true) do
+#   def value_for(record)
+#     accessor.is_a?(Proc) ? accessor.call(record) : record.public_send(accessor)
+#   end
+# end

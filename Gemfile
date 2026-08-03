@@ -36,6 +36,10 @@ gem "caxlsx"
 gem "roo"
 # Object-based searching / filtering for API query params
 gem "ransack"
+# Payments engine (Stripe, Paddle, Lemon Squeezy, Braintree) [https://github.com/pay-rails/pay]
+gem "pay", "~> 8.3"
+# Razorpay Ruby SDK — backs the custom Pay::Razorpay processor
+gem "razorpay", "~> 3.0"
 
 group :development do
   gem "bullet"
