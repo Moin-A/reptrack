@@ -19,9 +19,14 @@ Apartment.configure do |config|
   #
   # - Workspace is the tenant registry (tenant_names reads it), so it must live
   #   in public — otherwise Workspace.pluck(:name) varies by current schema.
+  # - User is the auth/identity that signs up and pays *before* any tenant
+  #   exists, so it must be public too (login happens before we know the tenant).
+  #   Per-workspace separation is by users.workspace_id, not by schema. Roles and
+  #   permissions stay tenant-scoped (not excluded).
   # - The Pay tables are billed at the workspace (tenant) level and owned by
   #   Workspace, so they stay in the shared public schema too.
   config.excluded_models = %w[
+    User
     Workspace
     Pay::Customer
     Pay::Charge
