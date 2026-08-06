@@ -32,6 +32,9 @@ RUN apt-get update -qq && \
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
+# The path gem pay-razorback_processor (engines/) must be present when bundler
+# resolves it, so copy the engine before bundle install.
+COPY engines/ engines/
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
