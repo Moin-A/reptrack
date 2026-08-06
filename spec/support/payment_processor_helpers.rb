@@ -1,8 +1,7 @@
 module PaymentProcessorHelpers
    def show_response(path, **options)
-          
-    filename = "#{options[:filename    ] || "details"}.json"
-    path = [path, filename].join("/")
+    filename = "#{options[:filename] || "details"}.json"
+    path = [ path, filename ].join("/")
 
 
     JSON.parse file_fixture(path).read

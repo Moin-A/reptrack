@@ -3,7 +3,7 @@ require_relative "lib/pay/razorback_processor/version"
 Gem::Specification.new do |spec|
   spec.name        = "pay-razorback_processor"
   spec.version     = Pay::RazorbackProcessor::VERSION
-  spec.authors     = ["Reptrack"]
+  spec.authors     = [ "Reptrack" ]
   spec.summary     = "Razorpay (razorback) payment processor for the Pay gem"
   spec.description  = "A Pay processor backing Pay with Razorpay: capture-based charges and webhook-driven charge syncing."
   spec.license     = "MIT"

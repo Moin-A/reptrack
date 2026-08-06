@@ -14,7 +14,7 @@ RSpec.describe "Billing (Razorpay checkout)", type: :request do
     it "creates an order and renders the checkout modal" do
       allow(::Razorpay::Order).to receive(:create).and_return(double(id: "order_ABC"))
 
-      get "/billing/checkout", params: {amount: 5000}
+      get "/billing/checkout", params: { amount: 5000 }
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("order_ABC")

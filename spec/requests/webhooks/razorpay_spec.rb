@@ -15,7 +15,7 @@ RSpec.describe "Razorpay webhooks", type: :request do
   def post_webhook(payload, signature:)
     post "/webhooks/razorpay",
       params: payload,
-      headers: {"X-Razorpay-Signature" => signature, "CONTENT_TYPE" => "application/json"}
+      headers: { "X-Razorpay-Signature" => signature, "CONTENT_TYPE" => "application/json" }
   end
 
   context "with a valid signature" do
@@ -41,7 +41,7 @@ RSpec.describe "Razorpay webhooks", type: :request do
   end
 
   context "for an event with no registered handler" do
-    let(:body) { {event: "payment.authorized", payload: {}}.to_json }
+    let(:body) { { event: "payment.authorized", payload: {} }.to_json }
 
     it "acks with 200 but does not store or enqueue" do
       expect {

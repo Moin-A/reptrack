@@ -22,7 +22,7 @@ RSpec.describe Pay::RazorbackProcessor::Webhooks::PaymentCaptured, "reconciliati
 
   let(:event) do
     raw = JSON.parse(file_fixture("payment_processor/webhook/payment_captured.json").read)
-    raw["payload"]["payment"]["entity"]["notes"] = {"pay_customer_id" => customer.id}
+    raw["payload"]["payment"]["entity"]["notes"] = { "pay_customer_id" => customer.id }
     raw
   end
   let(:entity)     { event.dig("payload", "payment", "entity") }

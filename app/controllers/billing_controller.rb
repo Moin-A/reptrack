@@ -45,7 +45,7 @@ class BillingController < ActionController::Base
       currency: charge.currency, status: charge.data["status"]
     }
   rescue Pay::Error, ::Razorpay::Error => e
-    render json: {error: e.message}, status: :unprocessable_entity
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   private
@@ -60,7 +60,7 @@ class BillingController < ActionController::Base
       razorpay_signature:  razorpay_create_params[:razorpay_signature]
     )
   rescue SecurityError
-    render json: {error: "signature verification failed"}, status: :unauthorized
+    render json: { error: "signature verification failed" }, status: :unauthorized
   end
 
   def razorpay_create_params

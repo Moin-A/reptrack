@@ -38,7 +38,7 @@ RSpec.describe Pay::RazorbackProcessor::Customer, type: :model do
       expect { customer.charge(1999) }.to raise_error(Pay::Error, /payment_id/)
     end
 
-    it "captures the payment_id via the Razorpay SDK and records a Pay::Charge" do      
+    it "captures the payment_id via the Razorpay SDK and records a Pay::Charge" do
       payment  = stub_api_response(::Razorpay::Payment, :fetch, response)
       stub_api_response(payment, :capture, response)
 
