@@ -2,6 +2,9 @@ require "sidekiq/web"
 
 Rails.application.routes.draw do
   mount Sidekiq::Web => "/sidekiq"
+
+  # Razorpay ("razorback") processor engine — provides POST /webhooks/razorpay.
+  mount Pay::RazorbackProcessor::Engine => "/"
   resources :tasks do
    post :complete, on: :member
   end

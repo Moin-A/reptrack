@@ -21,7 +21,7 @@ class Users::SessionsController < Devise::SessionsController
       render json: { error: "Please confirm your email address before signing in." }, status: :forbidden
     elsif resource
        sign_in(resource_name, resource)
-       render json: { message: "Signed in successfully.", user: { id: resource.id, email: resource.email } }, status: :ok
+       render json: { message: "Signed in successfully.", user: user_payload(resource) }, status: :ok
     else
       render json: { error: "Invalid email or password." }, status: :unauthorized
     end
@@ -37,13 +37,26 @@ class Users::SessionsController < Devise::SessionsController
 
   def me
     if current_user
-      render json: { user: { id: current_user.id, email: current_user.email } }, status: :ok
+      render json: { user: user_payload(current_user) }, status: :ok
     else
       render json: { error: "Not authenticated" }, status: :unauthorized
     end
   end
 
   protected
+
+  # Session user payload. `onboarded` tells the client whether the user has a
+  # workspace yet (nil until they pay to create one); `workspace` carries its
+  # id/name when present.
+  def user_payload(user)
+    {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      onboarded: user.workspace_id?,
+      workspace: user.workspace && { id: user.workspace.id, name: user.workspace.name }
+    }
+  end
 
   def sign_in_params
     devise_parameter_sanitizer.sanitize(:sign_in)
