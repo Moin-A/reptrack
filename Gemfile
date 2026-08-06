@@ -36,6 +36,13 @@ gem "caxlsx"
 gem "roo"
 # Object-based searching / filtering for API query params
 gem "ransack"
+# Payments engine (Stripe, Paddle, Lemon Squeezy, Braintree) [https://github.com/pay-rails/pay]
+gem "pay", "~> 8.3"
+# Razorpay Ruby SDK — backs the custom Pay::Razorpay processor
+gem "razorpay", "~> 3.0"
+# Razorpay ("razorback") Pay processor, packaged as an in-repo engine for later
+# extraction into a standalone gem.
+gem "pay-razorback_processor", path: "engines/pay-razorback_processor"
 
 group :development do
   gem "bullet"
@@ -69,3 +76,10 @@ gem "omniauth-facebook", "~> 10.0"
 gem "omniauth-rails_csrf_protection", "~> 2.0"
 
 gem "dotenv-rails", "~> 3.2", groups: [ :development, :test ]
+
+# Full-stack front end for Rails-rendered pages (billing/checkout). The JSON API
+# controllers are untouched — they still inherit ActionController::API.
+gem "propshaft"
+gem "importmap-rails"
+gem "turbo-rails"
+gem "stimulus-rails"

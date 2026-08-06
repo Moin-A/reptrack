@@ -42,6 +42,11 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
+# Precompile assets for the Rails-rendered pages (propshaft + importmap).
+# SECRET_KEY_BASE_DUMMY lets this run without the real secret, which is only
+# injected at runtime.
+RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
+
 
 
 

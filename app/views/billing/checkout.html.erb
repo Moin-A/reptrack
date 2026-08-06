@@ -1,0 +1,38 @@
+<%#
+  Phase 1 (Razorpay::Order.create) has already run in BillingController; this
+  page hands the resulting order to Razorpay's hosted modal via the checkout
+  Stimulus controller, which posts the signed result back for capture.
+
+  Expects from BillingController#checkout:
+    @order_id  String  order id from Razorpay::Order.create ("order_XXXX")
+    @amount    Integer amount in the smallest currency unit (paise), 100 = ₹1
+    @currency  String  "INR"
+    @key_id    String  public key — Razorpay.auth[:username]
+    @email     String  optional, prefills the modal
+%>
+
+<%# Razorpay's checkout.js is a third-party global script, not an ES module,
+    so it stays a plain tag rather than an importmap pin. %>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<h1>Checkout</h1>
+
+<p>
+  Paying <strong><%= number_to_currency(@amount.to_i / 100.0, unit: "₹") %></strong>
+  against order <code><%= @order_id %></code>.
+</p>
+
+<div data-controller="checkout"
+     data-checkout-key-value="<%= @key_id %>"
+     data-checkout-order-id-value="<%= @order_id %>"
+     data-checkout-amount-value="<%= @amount.to_i %>"
+     data-checkout-currency-value="<%= @currency %>"
+     data-checkout-email-value="<%= @email %>"
+     <%# Routes live in the mounted engine, so the helper comes off its proxy
+         rather than the main app's url_helpers. %>
+     data-checkout-capture-url-value="<%= pay_razorback_processor_engine.billing_charges_path %>">
+
+  <button data-action="click->checkout#pay">Pay with Razorpay</button>
+
+  <div data-checkout-target="result"></div>
+</div>
