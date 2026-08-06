@@ -129,5 +129,11 @@ end
 
 # Rails.application.config.middleware.use Apartment::Elevators::Domain
 Rails.application.config.middleware.use(Apartment::Elevators::Subdomain)
+
+# Reserved subdomains that are NOT tenants. Without this the Subdomain elevator
+# tries to switch to a schema named after the subdomain (e.g. the API is served
+# at api.<domain>), raising "Could not find schema api" on every request —
+# including sign in. Mirrors the list in spec/rails_helper.rb.
+Apartment::Elevators::Subdomain.excluded_subdomains = %w[www api admin]
 # Rails.application.config.middleware.use Apartment::Elevators::FirstSubdomain
 # Rails.application.config.middleware.use Apartment::Elevators::Host
