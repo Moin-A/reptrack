@@ -6,13 +6,14 @@ require "rails_helper"
 # a real payment API — so these specs run offline and are the reference for how
 # a future Pay::Razorpay processor would behave.
 #
-# User is configured with `pay_customer default_payment_processor: :fake_processor`,
-# so `user.payment_processor` lazily builds a Pay::FakeProcessor::Customer.
+# Workspace is the billable owner: `pay_customer default_payment_processor:
+# :fake_processor`, so `workspace.payment_processor` lazily builds a
+# Pay::FakeProcessor::Customer.
 RSpec.describe "Pay gem integration (fake processor)", type: :model do
-  let(:user) { create(:user) }
+  let(:workspace) { create(:workspace) }
 
-  it "gives the user a fake payment processor and can charge it" do
-    processor = user.payment_processor
+  it "gives the workspace a fake payment processor and can charge it" do
+    processor = workspace.payment_processor
 
     expect(processor).to be_a(Pay::FakeProcessor::Customer)
     expect(processor.processor).to eq("fake_processor")
@@ -23,16 +24,16 @@ RSpec.describe "Pay gem integration (fake processor)", type: :model do
     expect(charge).to be_a(Pay::Charge)
     expect(charge.amount).to eq(1999)
     expect(charge.data["brand"]).to eq("Fake")
-    expect(user.charges).to include(charge)
+    expect(workspace.charges).to include(charge)
   end
 
   it "creates an active subscription" do
-    subscription = user.payment_processor.subscribe(name: "default", plan: "monthly")
+    subscription = workspace.payment_processor.subscribe(name: "default", plan: "monthly")
 
     expect(subscription).to be_a(Pay::Subscription)
     expect(subscription.status).to eq("active")
     expect(subscription.processor_plan).to eq("monthly")
     expect(subscription.active?).to be(true)
-    expect(user.payment_processor.subscribed?(name: "default")).to be(true)
+    expect(workspace.payment_processor.subscribed?(name: "default")).to be(true)
   end
 end

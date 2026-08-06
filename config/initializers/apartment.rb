@@ -17,7 +17,19 @@ Apartment.configure do |config|
   # Add any models that you do not want to be multi-tenanted, but remain in the global (public) namespace.
   # A typical example would be a Customer or Tenant model that stores each Tenant's information.
   #
-  # config.excluded_models = %w{ Tenant }
+  # - Workspace is the tenant registry (tenant_names reads it), so it must live
+  #   in public — otherwise Workspace.pluck(:name) varies by current schema.
+  # - The Pay tables are billed at the workspace (tenant) level and owned by
+  #   Workspace, so they stay in the shared public schema too.
+  config.excluded_models = %w[
+    Workspace
+    Pay::Customer
+    Pay::Charge
+    Pay::Subscription
+    Pay::PaymentMethod
+    Pay::Merchant
+    Pay::Webhook
+  ]
 
   # In order to migrate all of your Tenants you need to provide a list of Tenant names to Apartment.
   # You can make this dynamic by providing a Proc object to be called on migrations.

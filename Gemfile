@@ -8,8 +8,8 @@ gem "pg", "~> 1.1"
 gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
-# Use Redis adapter to run Action Cable (webhook -> background job -> broadcast)
-gem "redis", ">= 4.0.1"
+# Use Redis adapter to run Action Cable in production
+# gem "redis", ">= 4.0.1"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -40,6 +40,9 @@ gem "ransack"
 gem "pay", "~> 8.3"
 # Razorpay Ruby SDK — backs the custom Pay::Razorpay processor
 gem "razorpay", "~> 3.0"
+# Razorpay ("razorback") Pay processor, packaged as an in-repo engine for later
+# extraction into a standalone gem.
+gem "pay-razorback_processor", path: "engines/pay-razorback_processor"
 
 group :development do
   gem "bullet"
@@ -73,3 +76,10 @@ gem "omniauth-facebook", "~> 10.0"
 gem "omniauth-rails_csrf_protection", "~> 2.0"
 
 gem "dotenv-rails", "~> 3.2", groups: [ :development, :test ]
+
+# Full-stack front end for Rails-rendered pages (billing/checkout). The JSON API
+# controllers are untouched — they still inherit ActionController::API.
+gem "propshaft"
+gem "importmap-rails"
+gem "turbo-rails"
+gem "stimulus-rails"

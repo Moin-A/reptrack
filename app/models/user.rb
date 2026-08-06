@@ -4,9 +4,6 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :confirmable
 
-  # Payments (Pay gem). Fake processor for now — swap default to :razorpay later.
-  pay_customer default_payment_processor: :fake_processor
-
   has_many :role_users, dependent: :destroy
   has_many :roles, through: :role_users
   has_many :permissions, dependent: :destroy

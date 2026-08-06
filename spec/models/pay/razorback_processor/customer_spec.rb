@@ -8,17 +8,19 @@ require "rails_helper"
 # the Razorpay SDK raising on capture, and capture returning a non-captured
 # payment without raising.
 RSpec.describe Pay::RazorbackProcessor::Customer, type: :model do
-  let(:user) { create(:user) }
+  let(:workspace) { create(:workspace) }
 
   describe "processor resolution / STI" do
-    subject(:customer) { user.set_payment_processor(:razorback_processor) }
+    subject(:customer) { workspace.set_payment_processor(:razorback_processor) }
 
     it "resolves :razorback_processor to this class" do
       expect(customer).to be_a(described_class)
     end
 
     it "is an STI row in pay_customers" do
-      expect(described_class.table_name).to eq("pay_customers")
+      # Schema-qualified ("public.pay_customers") because Pay::Customer is an
+      # Apartment excluded_model — it lives in the shared public schema.
+      expect(described_class.table_name).to end_with("pay_customers")
       expect(customer.type).to eq("Pay::RazorbackProcessor::Customer")
       expect(customer.processor).to eq("razorback_processor")
     end
@@ -29,7 +31,7 @@ RSpec.describe Pay::RazorbackProcessor::Customer, type: :model do
   end
 
   describe "#charge" do
-    subject(:customer) { user.set_payment_processor(:razorback_processor) }
+    subject(:customer) { workspace.set_payment_processor(:razorback_processor) }
     let(:response) { show_response("payment_processor/customer", filename: "success") }
 
     it "raises when no payment_id is given (capture needs a completed checkout)" do
