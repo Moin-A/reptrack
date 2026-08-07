@@ -47,8 +47,10 @@ RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompile assets for the Rails-rendered pages (propshaft + importmap).
 # SECRET_KEY_BASE_DUMMY lets this run without the real secret, which is only
-# injected at runtime.
-RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
+# injected at runtime. APARTMENT_DISABLE_INIT skips Apartment's boot-time
+# Tenant.init (its ARGV guard misses this Rails 7.2 invocation), which would
+# otherwise connect to a DB that doesn't exist during the build.
+RUN SECRET_KEY_BASE_DUMMY=1 APARTMENT_DISABLE_INIT=1 bundle exec rails assets:precompile
 
 
 
