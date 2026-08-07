@@ -29,5 +29,10 @@ jobs:
           bundle config set --local path 'vendor/bundle'
           bundle install
 
+      # tailwind.css is a build artifact (app/assets/builds/ is gitignored),
+      # so the layout's stylesheet_link_tag "tailwind" 500s without this.
+      - name: Build Tailwind CSS
+        run: bundle exec rails tailwindcss:build
+
       - name: Run RSpec
         run: bundle exec rspec

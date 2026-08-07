@@ -16,6 +16,13 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
+# Ruby 3.1's bundled RubyGems (3.3.7) predates gnu/musl platform gems, so it
+# can't fetch e.g. tailwindcss-ruby-4.3.3-x86_64-linux-gnu.gem from the
+# lockfile. Pin the upgrade: 3.5.x is the last series supporting Ruby 3.1
+# (an unpinned `gem update --system` picks a >=3.2-only release and silently
+# no-ops, exiting 0).
+RUN gem update --system 3.5.23 --no-document
+
 # Set production environment
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \

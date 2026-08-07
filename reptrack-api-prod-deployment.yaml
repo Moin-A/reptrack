@@ -67,6 +67,16 @@ spec:
                 secretKeyRef:
                   name: encryption-keys
                   key: AR_ENCRYPTION_KEY_DERIVATION_SALT
+            - name: RAZORPAY_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: reptrack-secrets
+                  key: RAZORPAY_KEY_ID
+            - name: RAZORPAY_KEY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: reptrack-secrets
+                  key: RAZORPAY_KEY_SECRET
           envFrom:
             - secretRef:
                 name: reptrack-secrets
