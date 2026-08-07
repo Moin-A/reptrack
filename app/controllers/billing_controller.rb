@@ -14,21 +14,64 @@ class BillingController < ActionController::Base
   # whose Razorpay HMAC doesn't check out before create ever runs.
   before_action :verify_payment_signature!, only: :create
 
-  # Phase 1 — create the order server-side, hand it to the hosted modal.
-  # Amount is in the smallest currency unit: 100 paise = ₹1.
-  def checkout
-    @amount   = 1000
-    @currency = "INR"
-    @key_id   = Razorpay.auth[:username]
-    @email    = nil # workspace-level billing has no single email to prefill
+  # Plans. Amounts are in the smallest currency unit (paise): 399_900 = ₹3,999.
+  # Annual is derived (12 months, 20% off) — see annual_amount. Adjust here.
+  ANNUAL_DISCOUNT = 0.8
+  TIERS = [
+    {
+      key: "starter",
+      name: "Starter",
+      tagline: "For single-location gyms getting off spreadsheets.",
+      amount_monthly: 50_000,
+      popular: false,
+      features: [
+        "Up to 300 active members",
+        "Membership & billing",
+        "Check-in & door access",
+        "Email support"
+      ]
+    },
+    {
+      key: "growth",
+      name: "Growth",
+      tagline: "For multi-location gyms and growing teams.",
+      amount_monthly: 90_000,
+      popular: true,
+      features: [
+        "Unlimited active members",
+        "Everything in Starter",
+        "Multi-location management",
+        "Campaigns & automations",
+        "Priority support"
+      ]
+    }
+  ].freeze
 
-    @order_id = ::Razorpay::Order.create(
-      amount: @amount,
-      currency: @currency,
-      receipt: "test_#{SecureRandom.hex(6)}"
-    ).id
+  # Annual total in paise: monthly * 12 * (1 - discount).
+  def self.annual_amount(monthly) = (monthly * 12 * ANNUAL_DISCOUNT).round
+
+  # Renders the pricing page. No Razorpay order is created here — the order is
+  # minted on "Get Started" click (create_order) for the chosen tier + period,
+  # so the charged amount always matches what the user selected.
+  def checkout
+    @key_id       = Razorpay.auth&.dig(:username)
+    @frontend_url = ENV["FRONTEND_URL"].presence || "http://localhost:3001"
+    @tiers = TIERS.map { |tier| tier.merge(amount_annual: self.class.annual_amount(tier[:amount_monthly])) }
+  end
+
+  # Creates a Razorpay order for the selected tier + billing period, called by
+  # the pricing controller before it opens the hosted modal. Amount comes from
+  # the server-side TIERS, never the client.
+  def create_order
+    tier = TIERS.find { |t| t[:key] == params[:tier] }
+    return render(json: { error: "unknown tier" }, status: :unprocessable_entity) if tier.nil?
+
+    amount = params[:period] == "annual" ? self.class.annual_amount(tier[:amount_monthly]) : tier[:amount_monthly]
+    order  = ::Razorpay::Order.create(amount: amount, currency: "INR", receipt: "test_#{SecureRandom.hex(6)}")
+
+    render json: { order_id: order.id, amount: amount, key: @key_id || Razorpay.auth&.dig(:username) }
   rescue ::Razorpay::Error => e
-    render plain: "Razorpay order creation failed: #{e.message}", status: :bad_gateway
+    render json: { error: e.message }, status: :bad_gateway
   end
 
   # Phase 3 — capture through the Pay processor. The signature was already

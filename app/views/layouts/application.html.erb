@@ -6,15 +6,11 @@
     <%# csrf_meta_tags emits the token the checkout JS reads for its POST. %>
     <%= csrf_meta_tags %>
 
-    <%#
-      No stylesheet_link_tag / javascript_include_tag: this app is api_only,
-      so there is no asset pipeline. Styles are inline and third-party JS is
-      loaded from a CDN by the view that needs it.
-    %>
+    <%# Tailwind (tailwindcss-rails) for the Rails-rendered pages. The inline
+        block below only styles the raw HTML the checkout JS injects at runtime
+        (.error / <pre>), which Tailwind utilities can't reach. %>
+    <%= stylesheet_link_tag "tailwind" %>
     <style>
-      body { font-family: system-ui, sans-serif; margin: 0; padding: 2rem; line-height: 1.5; }
-      main { max-width: 40rem; margin: 0 auto; }
-      button { font: inherit; padding: .6rem 1.2rem; cursor: pointer; }
       pre { background: #f4f4f5; padding: 1rem; overflow-x: auto; border-radius: 4px; }
       .error { color: #b00020; }
     </style>
