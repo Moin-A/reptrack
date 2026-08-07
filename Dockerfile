@@ -16,6 +16,12 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
+# Ruby 3.1's bundled RubyGems (3.3.7) predates gnu/musl platform gems, so it
+# asks rubygems.org for e.g. tailwindcss-ruby-4.3.3-x86_64-linux.gem, which
+# doesn't exist (only -gnu/-musl variants do) and 403s. Upgrade it so bundle
+# install can fetch those gems.
+RUN gem update --system --no-document
+
 # Set production environment
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
