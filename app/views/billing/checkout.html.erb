@@ -1,38 +1,120 @@
 <%#
-  Phase 1 (Razorpay::Order.create) has already run in BillingController; this
-  page hands the resulting order to Razorpay's hosted modal via the checkout
-  Stimulus controller, which posts the signed result back for capture.
+  Pricing/checkout page. No Razorpay order exists yet — the pricing Stimulus
+  controller mints one (POST billing/orders) for the chosen tier + billing
+  period when "Get Started" is clicked, then opens Razorpay's hosted modal and
+  posts the signed result to Phase 3 (billing/charges) for capture.
 
   Expects from BillingController#checkout:
-    @order_id  String  order id from Razorpay::Order.create ("order_XXXX")
-    @amount    Integer amount in the smallest currency unit (paise), 100 = ₹1
-    @currency  String  "INR"
-    @key_id    String  public key — Razorpay.auth[:username]
-    @email     String  optional, prefills the modal
+    @tiers        Array of { key, name, tagline, amount_monthly, amount_annual, popular, features }
+    @key_id       Razorpay public key
+    @frontend_url URL for the logo / Sign in links
 %>
 
-<%# Razorpay's checkout.js is a third-party global script, not an ES module,
-    so it stays a plain tag rather than an importmap pin. %>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<h1>Checkout</h1>
+<div class="min-h-screen bg-stone-100 text-slate-900"
+     data-controller="pricing"
+     data-pricing-key-value="<%= @key_id %>"
+     data-pricing-create-order-url-value="<%= pay_razorback_processor_engine.billing_orders_path %>"
+     data-pricing-capture-url-value="<%= pay_razorback_processor_engine.billing_charges_path %>">
 
-<p>
-  Paying <strong><%= number_to_currency(@amount.to_i / 100.0, unit: "₹") %></strong>
-  against order <code><%= @order_id %></code>.
-</p>
+  <%# ── Nav ───────────────────────────────────────────────────────────── %>
+  <nav class="flex items-center justify-between px-6 py-4 border-b border-stone-200">
+    <a href="<%= @frontend_url %>" class="flex items-center gap-2 font-bold text-lg">
+      <span class="grid place-items-center w-7 h-7 rounded-md bg-slate-900 text-white text-sm">R</span>
+      RepTrack
+    </a>
+    <%# ?verified=true is the param the frontend homepage's SignInButton watches
+        to auto-open the auth modal on landing. %>
+    <a href="<%= @frontend_url %>?verified=true"
+       class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
+      Sign in
+    </a>
+  </nav>
 
-<div data-controller="checkout"
-     data-checkout-key-value="<%= @key_id %>"
-     data-checkout-order-id-value="<%= @order_id %>"
-     data-checkout-amount-value="<%= @amount.to_i %>"
-     data-checkout-currency-value="<%= @currency %>"
-     data-checkout-email-value="<%= @email %>"
-     <%# Routes live in the mounted engine, so the helper comes off its proxy
-         rather than the main app's url_helpers. %>
-     data-checkout-capture-url-value="<%= pay_razorback_processor_engine.billing_charges_path %>">
+  <%# ── Hero ──────────────────────────────────────────────────────────── %>
+  <div class="mx-auto max-w-3xl px-4 pt-16 text-center">
+    <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight">Simple pricing for<br>growing gyms.</h1>
+    <p class="mt-4 text-slate-500">Start free for 14 days. No credit card required. Cancel anytime.</p>
 
-  <button data-action="click->checkout#pay">Pay with Razorpay</button>
+    <%# ── Billing toggle ──────────────────────────────────────────────── %>
+    <div class="mt-8 flex items-center justify-center gap-3 text-sm font-medium">
+      <span data-pricing-target="monthlyLabel" class="text-slate-900">Monthly</span>
+      <button type="button" role="switch"
+              data-action="click->pricing#toggle"
+              data-pricing-target="switch"
+              class="relative inline-flex h-6 w-11 items-center rounded-full bg-slate-300 transition-colors">
+        <span data-pricing-target="knob"
+              class="inline-block h-5 w-5 translate-x-0.5 rounded-full bg-white shadow transition-transform"></span>
+      </button>
+      <span data-pricing-target="annualLabel" class="text-slate-500">Annual</span>
+      <span class="rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">Save 20%</span>
+    </div>
+  </div>
 
-  <div data-checkout-target="result"></div>
+  <%# ── Tiers ─────────────────────────────────────────────────────────── %>
+  <div class="mx-auto max-w-4xl px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+    <% @tiers.each do |tier| %>
+      <div class="relative flex flex-col rounded-2xl bg-white p-8 shadow-sm
+                  <%= tier[:popular] ? 'ring-2 ring-slate-900' : 'ring-1 ring-stone-200' %>">
+        <% if tier[:popular] %>
+          <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-orange-500 px-3 py-1 text-xs font-semibold text-white">
+            Most popular
+          </span>
+        <% end %>
+
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-500"><%= tier[:name] %></p>
+
+        <div class="mt-3 flex items-baseline gap-1"
+             data-pricing-target="price"
+             data-monthly="<%= tier[:amount_monthly] %>"
+             data-annual="<%= tier[:amount_annual] %>">
+          <span class="text-4xl font-extrabold tracking-tight" data-amount><%= number_to_currency(tier[:amount_monthly] / 100.0, unit: "₹", precision: 0) %></span>
+          <span class="text-sm text-slate-500" data-suffix>/ month</span>
+        </div>
+
+        <p class="mt-2 text-sm text-slate-500"><%= tier[:tagline] %></p>
+
+        <button type="button"
+                data-action="click->pricing#pay"
+                data-tier="<%= tier[:key] %>"
+                class="mt-6 w-full rounded-lg px-4 py-3 text-sm font-semibold transition-colors
+                       <%= tier[:popular] ? 'bg-orange-500 text-white hover:bg-orange-600' : 'bg-white text-slate-900 ring-1 ring-stone-300 hover:bg-stone-50' %>">
+          Get Started
+        </button>
+
+        <ul class="mt-6 space-y-3 border-t border-stone-100 pt-6">
+          <% tier[:features].each do |feature| %>
+            <li class="flex items-start gap-2 text-sm text-slate-700">
+              <svg class="mt-0.5 h-4 w-4 shrink-0 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.7 4.2a.75.75 0 01.14 1.05l-8 10.5a.75.75 0 01-1.13.07l-4.5-4.5a.75.75 0 011.06-1.06l3.9 3.89 7.48-9.82a.75.75 0 011.05-.13z" clip-rule="evenodd"/>
+              </svg>
+              <span><%= feature %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+
+  <%# ── Capture status ────────────────────────────────────────────────── %>
+  <div class="mx-auto max-w-4xl px-4 text-center text-sm" data-pricing-target="result"></div>
+
+  <%# ── FAQ (native details, no JS) ───────────────────────────────────── %>
+  <div class="mx-auto max-w-2xl px-4 py-16">
+    <h2 class="text-center text-2xl font-bold mb-8">Questions</h2>
+    <% [
+         ["Can I switch plans later?", "Yes — upgrade or downgrade anytime; changes are prorated on your next invoice."],
+         ["What payment methods do you accept?", "All major cards, UPI, and net banking via Razorpay."],
+         ["Is there a setup fee?", "No setup fee. You only pay the monthly or annual plan price."]
+       ].each do |q, a| %>
+      <details class="group border-b border-stone-200 py-4">
+        <summary class="flex cursor-pointer items-center justify-between text-sm font-medium list-none">
+          <%= q %>
+          <span class="text-slate-400 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <p class="mt-3 text-sm text-slate-500"><%= a %></p>
+      </details>
+    <% end %>
+  </div>
 </div>

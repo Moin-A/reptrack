@@ -8,22 +8,51 @@ RSpec.describe "Billing (Razorpay checkout)", type: :request do
   let!(:workspace) { create(:workspace) }
   let(:success)    { show_response("payment_processor/customer", filename: "success") }
 
-  describe "GET /billing/checkout (Phase 1)" do
+  describe "GET /billing/checkout" do
     before { allow(Razorpay).to receive(:auth).and_return(username: "rzp_test_key") }
 
-    it "creates an order and renders the checkout modal" do
-      allow(::Razorpay::Order).to receive(:create).and_return(double(id: "order_ABC"))
-
-      get "/billing/checkout", params: { amount: 5000 }
-
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include("order_ABC")
-    end
-
-    it "returns 502 when order creation fails" do
-      allow(::Razorpay::Order).to receive(:create).and_raise(::Razorpay::Error.new("boom", 400))
+    it "renders the pricing page (no order created yet)" do
+      expect(::Razorpay::Order).not_to receive(:create)
 
       get "/billing/checkout"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Simple pricing", "Starter", "Growth", "Most popular")
+    end
+  end
+
+  describe "POST /billing/orders (mint order for tier + period)" do
+    before { allow(Razorpay).to receive(:auth).and_return(username: "rzp_test_key") }
+
+    def post_order(tier:, period:)
+      allow(::Razorpay::Order).to receive(:create).and_return(double(id: "order_XYZ"))
+      post "/billing/orders", params: { tier: tier, period: period }
+    end
+
+    it "creates a monthly order at the tier's monthly amount" do
+      post_order(tier: "starter", period: "monthly")
+
+      expect(response).to have_http_status(:ok)
+      body = JSON.parse(response.body)
+      expect(body).to include("order_id" => "order_XYZ", "amount" => 50_000)
+    end
+
+    it "applies the 20% annual discount (monthly * 12 * 0.8)" do
+      post_order(tier: "starter", period: "annual")
+
+      expect(JSON.parse(response.body)["amount"]).to eq(480_000)
+    end
+
+    it "rejects an unknown tier" do
+      post "/billing/orders", params: { tier: "enterprise", period: "monthly" }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it "returns 502 when Razorpay order creation fails" do
+      allow(::Razorpay::Order).to receive(:create).and_raise(::Razorpay::Error.new("boom", 400))
+
+      post "/billing/orders", params: { tier: "starter", period: "monthly" }
 
       expect(response).to have_http_status(:bad_gateway)
     end

@@ -9,5 +9,6 @@ Pay::RazorbackProcessor::Engine.routes.draw do
   #   GET  /billing/checkout — Phase 1: create a Razorpay order, render the modal
   #   POST /billing/charges  — Phase 3: verify the signature, then capture
   get  "billing/checkout", to: "billing#checkout"
+  post "billing/orders",   to: "billing#create_order"   # Phase 1: mint an order for the chosen tier+period
   post "billing/charges",  to: "billing#create"
 end
