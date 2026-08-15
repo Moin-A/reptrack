@@ -1,12 +1,14 @@
 require "rails_helper"
 
-# Request specs for the browser-facing Razorpay checkout (BillingController),
-# routed through the razorback engine. All Razorpay SDK calls are stubbed, so no
-# network/credentials are needed — Razorpay.auth is stubbed because the test env
-# never runs Razorpay.setup.
-RSpec.describe "Billing (Razorpay checkout)", type: :request do
-  let!(:workspace) { create(:workspace) }
+  # Request specs for the browser-facing Razorpay checkout (BillingController),
+  # routed through the razorback engine. All Razorpay SDK calls are stubbed, so no
+  # network/credentials are needed — Razorpay.auth is stubbed because the test env
+  # never runs Razorpay.setup.
+  RSpec.describe "Billing (Razorpay checkout)", type: :request do
   let(:success)    { show_response("payment_processor/customer", filename: "success") }
+  let(:user)       { create(:user, confirmed_at: Time.current) }
+
+  before { sign_in user }
 
   describe "GET /billing/checkout" do
     before { allow(Razorpay).to receive(:auth).and_return(username: "rzp_test_key") }

@@ -55,7 +55,7 @@ class BillingController < ActionController::Base
   # so the charged amount always matches what the user selected.
   def checkout
     @key_id       = Razorpay.auth&.dig(:username)
-    @frontend_url = ENV["FRONTEND_URL"].presence || "http://localhost:3001"
+    @frontend_url = ENV["FRONTEND_URL"].presence || "http://localhost:8000"
     @tiers = TIERS.map { |tier| tier.merge(amount_annual: self.class.annual_amount(tier[:amount_monthly])) }
   end
 
@@ -78,18 +78,18 @@ class BillingController < ActionController::Base
   # verified by the before_action, so the payload is trusted here. Take the
   # amount from Razorpay's order, never from the client.
   def create
-    amount = ::Razorpay::Order.fetch(razorpay_create_params[:razorpay_order_id]).amount
+     amount = ::Razorpay::Order.fetch(razorpay_create_params[:razorpay_order_id]).amount
+     workspace = current_user.workspace || current_user.create_workspace(status: :pending)
+     customer = workspace.set_payment_processor(:razorback_processor)
 
-    customer = billing_owner.set_payment_processor(:razorback_processor)
     charge = customer.charge(amount, payment_id: razorpay_create_params[:razorpay_payment_id], currency: "INR")
-
     render json: {
       id: charge.id, processor_id: charge.processor_id, amount: charge.amount,
       currency: charge.currency, status: charge.data["status"]
     }
-  rescue Pay::Error, ::Razorpay::Error => e
-    render json: { error: e.message }, status: :unprocessable_entity
-  end
+    rescue Pay::Error, ::Razorpay::Error => e
+      render json: { error: e.message }, status: :unprocessable_entity
+    end
 
   private
 
@@ -116,6 +116,6 @@ class BillingController < ActionController::Base
   # tenant's workspace before this route is reachable in any environment that
   # matters.
   def billing_owner
-    @billing_owner ||= Workspace.first
+    @billing_owner ||= Workspace.new
   end
 end
