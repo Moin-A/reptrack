@@ -4,7 +4,7 @@ class Workspace < ApplicationRecord
   attribute :name,  :string, default: :default_name
   validates :name, presence: true
 
-  enum status: { active: 0, archived: 1, pending: 2 }
+  enum status: { active: 0, archived: 1, pending: 2, provisioning: 3, failed: 4 }
 
   # Users belonging to this workspace. Nullify on destroy so a deleted workspace
   # doesn't take its users' identities down with it.

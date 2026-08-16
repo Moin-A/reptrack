@@ -59,8 +59,12 @@ module Pay
         currency = options[:currency] || "INR"
         raise Pay::Error, "Razorpay charge requires a :payment_id" if payment_id.blank?
 
-        payment  = razorpay_payment(payment_id)                 # authorized payment
-        captured = capture_payment(payment, amount, currency)   # money moves
+        # authorized (or already-captured) paymen
+        # Razorpay auto-captures at checkout when the order is configured for it,
+        # so the payment can already be "captured" by the time it reaches us.
+        # Capturing again raises "This payment has already been captured", so only
+        # capture when it hasn't happened yet; otherwise take the payment as-is.
+        captured = captured_payment(razorpay_payment(payment_id), amount, currency)
 
         # A successful capture comes back with status "captured". Anything else
         # (failed/cancelled/authorized) means no money moved — don't record a charge.
@@ -82,6 +86,18 @@ module Pay
       end
 
       private
+
+      def captured_payment(razorpay_payment, amount, currency)
+        if razorpay_payment.status == "captured"
+          razorpay_payment
+        else
+          capture_payment(razorpay_payment, amount, currency)
+        end
+      end
+
+      def razorpay_payment(payment_id)
+        ::Razorpay::Payment.fetch(payment_id)
+      end
 
       def capture_payment(payment, amount, currency)
         payment.capture(amount: amount, currency: currency)

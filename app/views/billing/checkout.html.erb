@@ -15,8 +15,8 @@
 <div class="min-h-screen bg-stone-100 text-slate-900"
      data-controller="pricing"
      data-pricing-key-value="<%= @key_id %>"
-     data-pricing-create-order-url-value="<%= pay_razorback_processor_engine.billing_orders_path %>"
-     data-pricing-capture-url-value="<%= pay_razorback_processor_engine.billing_charges_path %>">
+     data-pricing-create-order-url-value="<%= billing_orders_path %>"
+     data-pricing-capture-url-value="<%= billing_charges_path %>">
 
   <%# ── Nav ───────────────────────────────────────────────────────────── %>
   <nav class="flex items-center justify-between px-6 py-4 border-b border-stone-200">

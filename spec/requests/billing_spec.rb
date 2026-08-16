@@ -97,10 +97,12 @@ require "rails_helper"
     end
 
     it "returns 422 when Razorpay rejects the capture" do
-      payment = stub_api_response(::Razorpay::Payment, :fetch, success)
-      allow(payment).to receive(:capture).and_raise(::Razorpay::BadRequestError.new("payment already captured", 400))
+      # Must be an un-captured payment, otherwise charge skips the capture call.
+      authorized = show_response("payment_processor/customer", filename: "authorized")
+      payment = stub_api_response(::Razorpay::Payment, :fetch, authorized)
+      allow(payment).to receive(:capture).and_raise(::Razorpay::BadRequestError.new("insufficient funds", 400))
 
-      post_charge
+      post_charge(payment_id: authorized["id"])
 
       expect(response).to have_http_status(:unprocessable_entity)
     end

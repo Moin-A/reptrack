@@ -2,13 +2,22 @@
 #
 # Inherits ActionController::Base, NOT ApplicationController — the latter is
 # ActionController::API (this app is api_only) and cannot render templates.
-class BillingController < ActionController::Base
+class BillingController < BrowserController
   # Declared explicitly: the implicit layout is resolved from the controller
   # ancestry, and inheriting straight from ActionController::Base skips the
   # ApplicationController link that would normally imply layouts/application.
+  include OnboardingFlow
   layout "application"
+  onboarding_step "paid"
+  skip_before_action :enforce_step, only: [ :create_order, :create ]
 
   protect_from_forgery with: :exception
+
+  # The checkout JS posts a flat JSON body ({ razorpay_order_id, ... }). Without
+  # this, ParamsWrapper re-nests a copy under a "billing" key, which then trips
+  # "Unpermitted parameter: :billing" on every strong-params call. Read the
+  # top-level keys directly instead.
+  wrap_parameters false
 
   # The Phase 3 payload rides through the (untrusted) browser, so reject anything
   # whose Razorpay HMAC doesn't check out before create ever runs.
@@ -79,7 +88,10 @@ class BillingController < ActionController::Base
   # amount from Razorpay's order, never from the client.
   def create
      amount = ::Razorpay::Order.fetch(razorpay_create_params[:razorpay_order_id]).amount
-     workspace = current_user.workspace || current_user.create_workspace(status: :pending)
+
+     workspace = current_user.create_workspace!(status: :pending)
+     current_user.save!
+
      customer = workspace.set_payment_processor(:razorback_processor)
 
     charge = customer.charge(amount, payment_id: razorpay_create_params[:razorpay_payment_id], currency: "INR")
@@ -115,7 +127,4 @@ class BillingController < ActionController::Base
   # open — so this falls back to the first workspace. Replace with the current
   # tenant's workspace before this route is reachable in any environment that
   # matters.
-  def billing_owner
-    @billing_owner ||= Workspace.new
-  end
 end
