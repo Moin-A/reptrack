@@ -2,13 +2,22 @@
 #
 # Inherits ActionController::Base, NOT ApplicationController — the latter is
 # ActionController::API (this app is api_only) and cannot render templates.
-class BillingController < ActionController::Base
+class BillingController < BrowserController
   # Declared explicitly: the implicit layout is resolved from the controller
   # ancestry, and inheriting straight from ActionController::Base skips the
   # ApplicationController link that would normally imply layouts/application.
+  include OnboardingFlow
   layout "application"
+  onboarding_step "paid"
+  skip_before_action :enforce_step, only: [ :create_order, :create ]
 
   protect_from_forgery with: :exception
+
+  # The checkout JS posts a flat JSON body ({ razorpay_order_id, ... }). Without
+  # this, ParamsWrapper re-nests a copy under a "billing" key, which then trips
+  # "Unpermitted parameter: :billing" on every strong-params call. Read the
+  # top-level keys directly instead.
+  wrap_parameters false
 
   # The Phase 3 payload rides through the (untrusted) browser, so reject anything
   # whose Razorpay HMAC doesn't check out before create ever runs.
@@ -55,7 +64,7 @@ class BillingController < ActionController::Base
   # so the charged amount always matches what the user selected.
   def checkout
     @key_id       = Razorpay.auth&.dig(:username)
-    @frontend_url = ENV["FRONTEND_URL"].presence || "http://localhost:3001"
+    @frontend_url = ENV["FRONTEND_URL"].presence || "http://localhost:8000"
     @tiers = TIERS.map { |tier| tier.merge(amount_annual: self.class.annual_amount(tier[:amount_monthly])) }
   end
 
@@ -78,18 +87,21 @@ class BillingController < ActionController::Base
   # verified by the before_action, so the payload is trusted here. Take the
   # amount from Razorpay's order, never from the client.
   def create
-    amount = ::Razorpay::Order.fetch(razorpay_create_params[:razorpay_order_id]).amount
+     amount = ::Razorpay::Order.fetch(razorpay_create_params[:razorpay_order_id]).amount
 
-    customer = billing_owner.set_payment_processor(:razorback_processor)
+     workspace = current_user.create_workspace!(status: :pending)
+     current_user.save!
+
+     customer = workspace.set_payment_processor(:razorback_processor)
+
     charge = customer.charge(amount, payment_id: razorpay_create_params[:razorpay_payment_id], currency: "INR")
-
     render json: {
       id: charge.id, processor_id: charge.processor_id, amount: charge.amount,
       currency: charge.currency, status: charge.data["status"]
     }
-  rescue Pay::Error, ::Razorpay::Error => e
-    render json: { error: e.message }, status: :unprocessable_entity
-  end
+    rescue Pay::Error, ::Razorpay::Error => e
+      render json: { error: e.message }, status: :unprocessable_entity
+    end
 
   private
 
@@ -115,7 +127,4 @@ class BillingController < ActionController::Base
   # open — so this falls back to the first workspace. Replace with the current
   # tenant's workspace before this route is reachable in any environment that
   # matters.
-  def billing_owner
-    @billing_owner ||= Workspace.first
-  end
 end
