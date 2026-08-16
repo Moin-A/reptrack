@@ -44,6 +44,16 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
 
+  # Share the session cookie across *.reptrack.co.in subdomains so a sign-in on
+  # app.reptrack.co.in is honored on api.reptrack.co.in (e.g. billing/checkout,
+  # which requires auth). Without an explicit domain the cookie is host-only, so
+  # the API treats cross-subdomain requests as logged out and Devise redirects to
+  # the blank /users/sign_in. (".co.in" is the public suffix, so the shareable
+  # parent domain is ".reptrack.co.in".)
+  config.session_store :cookie_store,
+    key: "_reptrack_session",
+    domain: ENV.fetch("SESSION_COOKIE_DOMAIN", ".reptrack.co.in")
+
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
