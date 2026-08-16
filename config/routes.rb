@@ -5,6 +5,25 @@ Rails.application.routes.draw do
 
   # Razorpay ("razorback") processor engine — provides POST /webhooks/razorpay.
   mount Pay::RazorbackProcessor::Engine => "/"
+
+  # Browser-facing checkout + onboarding. These dispatch to host controllers
+  # (BillingController, WorkspacesController). They live here — not in the
+  # razorback engine — so their path helpers register on the application's
+  # route set, which is what OnboardingFlow (included in those host
+  # controllers) resolves via `send(...)`.
+  get  "billing/checkout",     to: "billing#checkout",     as: :billing_checkout
+  post "billing/orders",       to: "billing#create_order", as: :billing_orders
+  post "billing/charges",      to: "billing#create",       as: :billing_charges
+  get  "billing/provisioning", to: "billing#provisioning", as: :billing_provisioning
+
+  resource :billing_workspace, only: [ :edit, :update ],
+           path: "billing/workspace", controller: "workspaces"
+
+  # "active" workspaces belong on the frontend dashboard (a separate Next app),
+  # so OnboardingFlow's dashboard_path bounces there rather than to a Rails view.
+  get "dashboard",
+      to: redirect(ENV["FRONTEND_URL"].presence || "http://localhost:3001"),
+      as: :dashboard
   resources :tasks do
    post :complete, on: :member
   end

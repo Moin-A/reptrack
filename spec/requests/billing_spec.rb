@@ -1,12 +1,14 @@
 require "rails_helper"
 
-# Request specs for the browser-facing Razorpay checkout (BillingController),
-# routed through the razorback engine. All Razorpay SDK calls are stubbed, so no
-# network/credentials are needed — Razorpay.auth is stubbed because the test env
-# never runs Razorpay.setup.
-RSpec.describe "Billing (Razorpay checkout)", type: :request do
-  let!(:workspace) { create(:workspace) }
+  # Request specs for the browser-facing Razorpay checkout (BillingController),
+  # routed through the razorback engine. All Razorpay SDK calls are stubbed, so no
+  # network/credentials are needed — Razorpay.auth is stubbed because the test env
+  # never runs Razorpay.setup.
+  RSpec.describe "Billing (Razorpay checkout)", type: :request do
   let(:success)    { show_response("payment_processor/customer", filename: "success") }
+  let(:user)       { create(:user, confirmed_at: Time.current) }
+
+  before { sign_in user }
 
   describe "GET /billing/checkout" do
     before { allow(Razorpay).to receive(:auth).and_return(username: "rzp_test_key") }
@@ -95,10 +97,12 @@ RSpec.describe "Billing (Razorpay checkout)", type: :request do
     end
 
     it "returns 422 when Razorpay rejects the capture" do
-      payment = stub_api_response(::Razorpay::Payment, :fetch, success)
-      allow(payment).to receive(:capture).and_raise(::Razorpay::BadRequestError.new("payment already captured", 400))
+      # Must be an un-captured payment, otherwise charge skips the capture call.
+      authorized = show_response("payment_processor/customer", filename: "authorized")
+      payment = stub_api_response(::Razorpay::Payment, :fetch, authorized)
+      allow(payment).to receive(:capture).and_raise(::Razorpay::BadRequestError.new("insufficient funds", 400))
 
-      post_charge
+      post_charge(payment_id: authorized["id"])
 
       expect(response).to have_http_status(:unprocessable_entity)
     end

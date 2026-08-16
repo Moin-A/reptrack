@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_08_07_012300) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_16_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -420,6 +420,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_07_012300) do
 
   create_table "workspaces", force: :cascade do |t|
     t.string "name", null: false
+    t.string "subdomain"
+    t.string "schema_name"
+    t.integer "status", default: 0, null: false
+    t.index ["schema_name"], name: "index_workspaces_on_schema_name", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

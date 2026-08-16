@@ -15,21 +15,30 @@
 <div class="min-h-screen bg-stone-100 text-slate-900"
      data-controller="pricing"
      data-pricing-key-value="<%= @key_id %>"
-     data-pricing-create-order-url-value="<%= pay_razorback_processor_engine.billing_orders_path %>"
-     data-pricing-capture-url-value="<%= pay_razorback_processor_engine.billing_charges_path %>">
+     data-pricing-create-order-url-value="<%= billing_orders_path %>"
+     data-pricing-capture-url-value="<%= billing_charges_path %>">
 
   <%# ── Nav ───────────────────────────────────────────────────────────── %>
   <nav class="flex items-center justify-between px-6 py-4 border-b border-stone-200">
     <a href="<%= @frontend_url %>" class="flex items-center gap-2 font-bold text-lg">
       <span class="grid place-items-center w-7 h-7 rounded-md bg-slate-900 text-white text-sm">R</span>
       RepTrack
-    </a>
+    </a>    
     <%# ?verified=true is the param the frontend homepage's SignInButton watches
         to auto-open the auth modal on landing. %>
-    <a href="<%= @frontend_url %>?verified=true"
-       class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
-      Sign in
-    </a>
+    <% if current_user %>
+     <%= button_to "Sign Out", destroy_user_session_path,
+      method: :delete,
+      data: { turbo: false },
+      class: "rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 cursor-pointer" %>
+
+
+    <% else %>
+      <a href="<%= @frontend_url %>?verified=true"
+         class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
+        Sign in
+      </a>
+    <% end %>
   </nav>
 
   <%# ── Hero ──────────────────────────────────────────────────────────── %>
