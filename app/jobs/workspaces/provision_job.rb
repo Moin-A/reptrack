@@ -6,23 +6,19 @@ module Workspaces
     def perform(workspace)
       return if workspace.active?
 
-      assign_schema_name(workspace)
+      # schema_name is assigned by Workspace#after_create; make sure we see it.
+      workspace.reload
       create_schema(workspace.schema_name)
       seed(workspace)
 
       workspace.update!(status: :active)
       notify(workspace)
     rescue StandardError
-      workspace.update!(status: :provisioning_failed)
+      workspace.update!(status: :failed)
       raise
     end
 
     private
-
-    def assign_schema_name(workspace)
-      return if workspace.schema_name.present?
-      workspace.update!(schema_name: "tenant_#{workspace.id}")
-    end
 
     def create_schema(schema)
       return if ActiveRecord::Base.connection.schema_exists?(schema)

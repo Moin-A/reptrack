@@ -57,7 +57,12 @@ class Users::SessionsController < Devise::SessionsController
       name: user.name,
       email: user.email,
       onboarded: user.workspace_id?,
-      workspace: user.workspace && { id: user.workspace.id, name: user.workspace.name }
+      workspace: user.workspace && {
+        id: user.workspace.id,
+        name: user.workspace.name,
+        subdomain: user.workspace.subdomain,
+        schema_name: user.workspace.schema_name
+      }
     }
   end
 
