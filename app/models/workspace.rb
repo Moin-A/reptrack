@@ -1,7 +1,9 @@
 class Workspace < ApplicationRecord
   # Each workspace is an Apartment tenant. `name` is the subdomain; `schema_name`
   # is the Postgres schema it maps to — see config/initializers/apartment.rb.
-  validates :name, presence: true
+  # Created nameless at the `pending` stage (checkout); the name is collected by
+  # the onboarding form when it moves to `provisioning`, so only require it then.
+  validates :name, presence: true, unless: :pending?
 
   enum status: { active: 0, archived: 1, pending: 2, provisioning: 3, failed: 4 }
 

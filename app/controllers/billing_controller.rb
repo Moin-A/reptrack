@@ -64,7 +64,7 @@ class BillingController < BrowserController
   # so the charged amount always matches what the user selected.
   def checkout
     @key_id       = Razorpay.auth&.dig(:username)
-    @frontend_url = ENV["FRONTEND_URL"].presence || "http://lvl.me:8000"
+    @frontend_url = ENV["FRONTEND_URL"].presence || "http://localhost:8000"
     @tiers = TIERS.map { |tier| tier.merge(amount_annual: self.class.annual_amount(tier[:amount_monthly])) }
   end
 

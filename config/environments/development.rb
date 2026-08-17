@@ -17,6 +17,12 @@ Rails.application.configure do
   # Enable server timing.
   config.server_timing = true
 
+  # Share the session cookie across *.lvh.me (frontend on lvh.me:8000, API on
+  # lvh.me:3000 / <tenant>.lvh.me:3000). No port — cookie domains can't have one.
+  config.session_store :cookie_store,
+    key: "_reptrack_session",
+    domain: ENV.fetch("SESSION_COOKIE_DOMAIN", ".localhost")
+
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
   if Rails.root.join("tmp/caching-dev.txt").exist?
