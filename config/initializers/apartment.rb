@@ -67,7 +67,9 @@ Apartment.configure do |config|
   #   end
   # end
   #
-  config.tenant_names = -> { Workspace.pluck(:name) }
+  # Keyed by the actual Postgres schema (tenant_<id>), which is what gets created
+  # and migrated. The user-facing subdomain is mapped to this by the elevator below.
+  config.tenant_names = -> { Workspace.where.not(schema_name: nil).pluck(:schema_name) }
 
   # PostgreSQL:
   #   Specifies whether to use PostgreSQL schemas or create a new database per Tenant.
@@ -128,12 +130,23 @@ end
 # }
 
 # Rails.application.config.middleware.use Apartment::Elevators::Domain
-Rails.application.config.middleware.use(Apartment::Elevators::Subdomain)
+# The subdomain (e.g. "ironworks") is user-facing; the schema (e.g. "tenant_11")
+# is internal. Resolve the subdomain like the stock elevator, then map it to the
+# workspace's schema_name so Apartment switches to the right schema.
+class WorkspaceSubdomainElevator < Apartment::Elevators::Subdomain
+  def parse_tenant_name(request)
+    subdomain = super
+    return if subdomain.blank?
+    Workspace.find_by(subdomain: subdomain)&.schema_name
+  end
+end
+
+Rails.application.config.middleware.use(WorkspaceSubdomainElevator)
 
 # Reserved subdomains that are NOT tenants. Without this the Subdomain elevator
 # tries to switch to a schema named after the subdomain (e.g. the API is served
 # at api.<domain>), raising "Could not find schema api" on every request —
 # including sign in. Mirrors the list in spec/rails_helper.rb.
-Apartment::Elevators::Subdomain.excluded_subdomains = %w[www api admin]
+WorkspaceSubdomainElevator.excluded_subdomains = %w[www api admin]
 # Rails.application.config.middleware.use Apartment::Elevators::FirstSubdomain
 # Rails.application.config.middleware.use Apartment::Elevators::Host

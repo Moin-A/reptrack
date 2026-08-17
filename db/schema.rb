@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_08_16_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_17_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -419,7 +419,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_16_120000) do
   end
 
   create_table "workspaces", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "name"
     t.string "subdomain"
     t.string "schema_name"
     t.integer "status", default: 0, null: false
