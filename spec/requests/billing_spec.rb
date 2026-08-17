@@ -77,7 +77,7 @@ require "rails_helper"
     it "verifies, captures, and returns the charge as JSON" do
       payment = stub_api_response(::Razorpay::Payment, :fetch, success)
       stub_api_response(payment, :capture, success)
-      
+
       expect { post_charge }.to change(Pay::RazorbackProcessor::Charge, :count).by(1)
 
       expect(response).to have_http_status(:ok)
