@@ -34,7 +34,7 @@ class Users::SessionsController < Devise::SessionsController
       redirect_to ENV["FRONTEND_URL"].presence || "http://localhost:3001",
                   allow_other_host: true, status: :see_other
     else
-      head non_navigational_status
+      head :no_content
     end
   end
 
