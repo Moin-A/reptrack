@@ -21,7 +21,7 @@ Rails.application.configure do
   # lvh.me:3000 / <tenant>.lvh.me:3000). No port — cookie domains can't have one.
   config.session_store :cookie_store,
     key: "_reptrack_session",
-    domain: ENV.fetch("SESSION_COOKIE_DOMAIN", ".localhost")
+    domain: ENV.fetch("SESSION_COOKIE_DOMAIN", ".lvh.me")
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.

@@ -7,6 +7,12 @@
     config.consider_all_requests_local = true  # Show error pages (useful in staging)
     config.active_storage.service = :local
     config.force_ssl = true
+
+    # Share the session cookie across *.staging.reptrack.co.in subdomains, same
+    # reasoning as production (see production.rb) but scoped to the staging host.
+    config.session_store :cookie_store,
+      key: "_reptrack_session",
+      domain: ENV.fetch("SESSION_COOKIE_DOMAIN", ".staging.reptrack.co.in")
     config.logger = ActiveSupport::Logger.new(STDOUT)
       .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
       .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
