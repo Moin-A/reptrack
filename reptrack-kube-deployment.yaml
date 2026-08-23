@@ -123,8 +123,35 @@ spec:
         paths:                                                                                                                                                                               
           - path: /
             pathType: Prefix
-            backend:                        
-              service:                  
+            backend:
+              service:
                 name: reptrack-service
-                port:                                                                                                                                                                          
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: reptrack-staging-wildcard
+  namespace: reptrack
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    # tells cert-manager this Ingress needs the wildcard cert, not per-host ones
+    acme.cert-manager.io/http01-edit-in-place: "false"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - "*.staging.reptrack.co.in"
+      secretName: reptrack-staging-wildcard-tls
+  rules:
+    - host: "*.staging.reptrack.co.in"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: reptrack-service
+                port:
                   number: 80 
