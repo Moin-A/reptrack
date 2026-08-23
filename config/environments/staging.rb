@@ -8,8 +8,9 @@
     config.active_storage.service = :local
     config.force_ssl = true
 
-    # Share the session cookie across *.staging.reptrack.co.in subdomains, same
-    # reasoning as production (see production.rb) but scoped to the staging host.
+    # Share the session cookie across *.reptrack.co.in subdomains — staging
+    # currently serves tenant traffic on the same domain as prod (see
+    # production.rb), not a staging.reptrack.co.in-scoped one.
     config.session_store :cookie_store,
       key: "_reptrack_session",
       domain: ENV.fetch("SESSION_COOKIE_DOMAIN", ".reptrack.co.in")
@@ -22,7 +23,10 @@
     config.i18n.fallbacks = true
     config.active_support.report_deprecations = true  # Surface warnings in staging
     config.active_record.dump_schema_after_migration = false
-    config.action_mailer.default_url_options = { host: "app.reptrack.co.in" }
+    # This is the Rails host, not the frontend's — mailer links (confirmation,
+    # password reset) are generated against this and must resolve to Rails,
+    # not to app.reptrack.co.in (the Next.js app, which has no matching routes).
+    config.action_mailer.default_url_options = { host: "staging.reptrack.co.in" }
     config.action_mailer.smtp_settings = {
     address:              ENV["SMTP_ADDRESS"],
     port:                 587,
