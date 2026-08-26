@@ -123,8 +123,38 @@ spec:
         paths:                                                                                                                                                                               
           - path: /
             pathType: Prefix
-            backend:                        
-              service:                  
+            backend:
+              service:
                 name: reptrack-service
-                port:                                                                                                                                                                          
+                port:
+                  number: 80
+---
+# Every tenant subdomain (*.reptrack.co.in) routes to staging for now — there
+# are no live prod tenants yet, so nothing else claims this wildcard. This
+# conflicts with reptrack-api-wildcard in reptrack-api-prod-deployment.yaml,
+# which matches the same host pattern for the reptrack-api service; that
+# Ingress must be removed/disabled or the two will fight over the same host.
+# TLS reuses reptrack-wildcard-tls (already issued for *.reptrack.co.in by
+# that prod Ingress) since it already covers this host.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: reptrack-staging-tenant-wildcard
+  namespace: reptrack
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - "*.reptrack.co.in"
+      secretName: reptrack-wildcard-tls
+  rules:
+    - host: "*.reptrack.co.in"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: reptrack-service
+                port:
                   number: 80 
