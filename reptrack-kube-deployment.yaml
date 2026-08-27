@@ -185,3 +185,10 @@ spec:
                 name: reptrack-service
                 port:
                   number: 80
+          - path: /api/push
+            pathType: Prefix
+            backend:
+              service:
+                name: notif-api-service
+                port:
+                  number: 80
