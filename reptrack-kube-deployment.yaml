@@ -189,6 +189,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: notif-api-service
+                name: notif-api
                 port:
                   number: 80
