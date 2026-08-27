@@ -127,7 +127,7 @@ spec:
               service:
                 name: reptrack-service
                 port:
-                  number: 80    
+                  number: 80
 ---
 # Every tenant subdomain (*.reptrack.co.in) routes to staging for now — there
 # are no live prod tenants yet, so nothing else claims this wildcard. This
@@ -157,9 +157,8 @@ spec:
               service:
                 name: reptrack-service
                 port:
-                  number: 80 
+                  number: 80
 ---
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -185,10 +184,9 @@ spec:
                 name: reptrack-service
                 port:
                   number: 80
-          - path: /api/push
-            pathType: Prefix
-            backend:
-              service:
-                name: notif-api
-                port:
-                  number: 80
+---
+# /api/push for staging.reptrack.co.in is routed to notif-api via a separate
+# Ingress living in the notif namespace itself (see notif-kube-deployment.yaml) —
+# Traefik requires cross-namespace Service refs to be explicitly enabled
+# (allowCrossNamespace / allowExternalNameServices), which this cluster doesn't
+# set, so the backend has to live in the same namespace as its Ingress.
