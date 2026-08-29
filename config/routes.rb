@@ -49,6 +49,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :subscriptions do
+    get :token, on: :collection
+  end
+
   # OAuth connect for social accounts. OmniAuth middleware handles the request
   # phase (POST /auth/:provider); these handle the callback + failure.
   get "/auth/:provider/callback", to: "campaign/omniauth_callbacks#create"
