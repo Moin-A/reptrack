@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
     # Ransack over the CanCan-scoped relation; a blank search is ignored by
     # ransack, so no guard needed. The frontend sends a single `search` term
     # and a friendly `sort` key (see Sortable).
-    accounts = @accounts.ransack(
+    accounts = @accounts.includes(:shipping_address, :billing_address).ransack(
       name_or_email_or_category_cont: params[:search],
       s: sort_expression
     ).result

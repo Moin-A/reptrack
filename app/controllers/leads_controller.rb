@@ -5,7 +5,7 @@ class LeadsController < ApplicationController
     # Ransack over the CanCan-scoped relation (was Lead.all — which bypassed
     # authorization scoping). Lead has no `name` column, so the "name" sort
     # maps to first/last name.
-    leads = @leads.ransack(
+    leads = @leads.includes(:assignee, :business_address, :user).ransack(
       first_name_or_last_name_or_company_or_email_cont: params[:search],
       s: sort_expression(overrides: { "name" => [ "first_name asc", "last_name asc" ] })
     ).result

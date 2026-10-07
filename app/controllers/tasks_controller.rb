@@ -5,7 +5,7 @@
   # GET /tasks
   def index
     buckets, pagy_by_bucket = TaskSerializer.grouped_by_bucket do |bucket|
-      pagy(Task.incomplete.in_bucket(bucket), page: page(bucket), limit: 5)
+      pagy(Task.incomplete.in_bucket(bucket).includes(:user, :assignee), page: page(bucket), limit: 5)
     end
 
     pagination = pagy_by_bucket.transform_values do |p|

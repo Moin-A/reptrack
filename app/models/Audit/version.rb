@@ -15,14 +15,20 @@ module Audit
       end
     end
 
+    # Was `all.select { ... }`, which pulled every row in the table into Ruby
+    # (reifying each one, even for items long since deleted) on every call,
+    # before pagination ever ran. The ownership fields it was checking
+    # (user_id/assignee_id) are already captured in the `object` jsonb
+    # snapshot taken at audit time, so this reads them straight out of
+    # Postgres instead — one indexed query, no per-row reify, and it still
+    # works for versions whose item has since been deleted.
     def self.visible_to(user)
+      return none if user.nil?
       return all if user.admin?
 
-      visible_ids = all.select do |version|
-        item = version.item || version.reify
-        item.user_id == user.id || item.assignee_id == user.id || version.whodunnit.to_i == user.id
-      end.map(&:id)
-      where(id: visible_ids)
+      where(whodunnit: user.id.to_s)
+        .or(where("object ->> 'user_id' = ?", user.id.to_s))
+        .or(where("object ->> 'assignee_id' = ?", user.id.to_s))
     end
   end
 end
