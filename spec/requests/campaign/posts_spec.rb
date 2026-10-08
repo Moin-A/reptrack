@@ -49,10 +49,9 @@ RSpec.describe "Campaign posts", type: :request do
     it "does not update a post owned by another user" do
       other_post = create(:post, content: "theirs")
 
-      expect {
-        patch "/campaign/posts/#{other_post.id}", params: { campaign_post: { content: "hacked" } }
-      }.to raise_error(CanCan::AccessDenied)
+      patch "/campaign/posts/#{other_post.id}", params: { campaign_post: { content: "hacked" } }
 
+      expect(response).to have_http_status(:forbidden)
       expect(other_post.reload.content).to eq("theirs")
     end
   end
@@ -70,10 +69,9 @@ RSpec.describe "Campaign posts", type: :request do
     it "does not delete a post owned by another user" do
       other_post = create(:post) # different user
 
-      expect {
-        delete "/campaign/posts/#{other_post.id}"
-      }.to raise_error(CanCan::AccessDenied)
+      delete "/campaign/posts/#{other_post.id}"
 
+      expect(response).to have_http_status(:forbidden)
       expect(Campaign::Post.exists?(other_post.id)).to be(true)
     end
   end

@@ -114,9 +114,8 @@ RSpec.describe TasksController, type: :controller do
     end
 
     it "returns a cancan authorization error" do
-     expect {
-       post :complete, params: { id: task.id }
-     }.to raise_error(CanCan::AccessDenied)
+      post :complete, params: { id: task.id }
+      expect(response).to have_http_status(:forbidden)
     end
   end
 

@@ -12,6 +12,7 @@ class ApplicationController < ActionController::API
 
   rescue_from ActiveRecord::StatementInvalid, with: :handle_statement_invalid
   rescue_from ActiveRecord::RecordNotFound, with: :handle_record_not_found
+  rescue_from CanCan::AccessDenied, with: :handle_access_denied
 
   private
 
@@ -26,5 +27,13 @@ class ApplicationController < ActionController::API
 
   def handle_record_not_found(exception)
     render json: { errors: [ "#{exception.model} not found" ] }, status: :not_found
+  end
+
+  # Was unhandled — every authorization failure (including a plain
+  # unauthenticated request, since current_user being nil grants zero
+  # abilities) crashed as a raw 500 instead of a clean 401/403.
+  def handle_access_denied(exception)
+    status = current_user ? :forbidden : :unauthorized
+    render json: { errors: [ exception.message ] }, status: status
   end
 end
