@@ -185,6 +185,12 @@ GEM
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
+    lograge (0.15.1)
+      actionpack (>= 4)
+      activesupport (>= 4)
+      logger
+      railties (>= 4)
+      request_store (~> 1.0)
     loofah (2.25.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -212,13 +218,13 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.5)
-    nokogiri (1.18.10-aarch64-linux-gnu)
+    nokogiri (1.18.10-aarch64-linux)
       racc (~> 1.4)
     nokogiri (1.18.10-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.10-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.18.10-x86_64-linux-gnu)
+    nokogiri (1.18.10-x86_64-linux)
       racc (~> 1.4)
     oauth2 (2.0.24)
       anonymous_loader (~> 0.1, >= 0.1.1)
@@ -340,6 +346,8 @@ GEM
     regexp_parser (2.12.0)
     reline (0.6.3)
       io-console (~> 0.5)
+    request_store (1.7.0)
+      rack (>= 1.4)
     responders (3.2.0)
       actionpack (>= 7.0)
       railties (>= 7.0)
@@ -420,10 +428,10 @@ GEM
     tailwindcss-rails (4.6.0)
       railties (>= 7.0.0)
       tailwindcss-ruby (~> 4.0)
-    tailwindcss-ruby (4.3.3-aarch64-linux-gnu)
+    tailwindcss-ruby (4.3.3-aarch64-linux)
     tailwindcss-ruby (4.3.3-arm64-darwin)
     tailwindcss-ruby (4.3.3-x86_64-darwin)
-    tailwindcss-ruby (4.3.3-x86_64-linux-gnu)
+    tailwindcss-ruby (4.3.3-x86_64-linux)
     thor (1.5.0)
     timeout (0.6.1)
     tsort (0.2.0)
@@ -454,11 +462,11 @@ GEM
 
 PLATFORMS
   aarch64-linux
-  aarch64-linux-gnu
+  aarch64-linux
   arm64-darwin
   x86_64-darwin
   x86_64-linux
-  x86_64-linux-gnu
+  x86_64-linux
 
 DEPENDENCIES
   bootsnap
@@ -475,6 +483,7 @@ DEPENDENCIES
   importmap-rails
   jsonapi-serializer
   jwt (~> 3.1)
+  lograge
   omniauth-facebook (~> 10.0)
   omniauth-rails_csrf_protection (~> 2.0)
   pagy

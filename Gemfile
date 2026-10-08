@@ -6,6 +6,10 @@ gem "rails", "~> 7.2.3"
 gem "pg", "~> 1.1"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
+# One JSON line per request (controller/action/status/duration/user_id)
+# instead of Rails' multi-line format, so logs can be filtered/sorted on
+# those fields directly (e.g. in Datadog) without a Grok parser.
+gem "lograge"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 # Use Redis adapter to run Action Cable in production

@@ -16,6 +16,14 @@ class ApplicationController < ActionController::API
 
   private
 
+  # Lets lograge (config/initializers/lograge.rb) include who made the
+  # request and its request id in the one-line JSON log.
+  def append_info_to_payload(payload)
+    super
+    payload[:user_id] = current_user&.id
+    payload[:request_id] = request.request_id
+  end
+
   def activities_params
   end
 
